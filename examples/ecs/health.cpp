@@ -45,6 +45,7 @@ int main() {
     world.RegisterSystem<HealthSystem>();
     world.SetSystemSignature<HealthSystem>(world.MakeSignature<Player, Health>());
 
+    // create global singleton for when the game should quit
     world.SetSingleton<ShouldQuit>({});
 
     // create an entity and add the components on it
