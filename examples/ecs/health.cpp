@@ -46,17 +46,17 @@ int main() {
     world.AddComponent(player, Health{ 20.0 });
 
     // this returns a reference so when its changed it will update this, no need to call it every frame
-    auto& should_quit = world.GetSingleton<ShouldQuit>();
+    auto& shouldQuit = world.GetSingleton<ShouldQuit>();
 
     // game loop
-    float dt = 0.0;
-    while(!should_quit.value) {
-        auto startTime = std::chrono::high_resolution_clock::now();
+    auto lastTime = std::chrono::high_resolution_clock::now();
 
-		world.Update(dt);
+    while(!shouldQuit.value) {
+        auto currentTime = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<float> elapsed = currentTime - lastTime;
+        lastTime = currentTime;
 
-		auto stopTime = std::chrono::high_resolution_clock::now();
-
-		dt = std::chrono::duration<float, std::chrono::seconds::period>(stopTime - startTime).count();
+        float dt = elapsed.count();
+        world.Update(dt);
     }
 }
