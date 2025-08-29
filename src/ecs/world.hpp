@@ -28,7 +28,7 @@ namespace acheron {
                 componentManager->AddComponent<T>(entity, component);
 
                 auto signature = entityManager->GetSignature(entity);
-                signature.set(componentManager->GetComponentID<T>(), true);
+                signature.insert(componentManager->GetComponentID<T>());
                 entityManager->SetSignature(entity, signature);
 
                 systemManager->EntitySignatureChanged(entity, signature);
@@ -39,7 +39,7 @@ namespace acheron {
                 componentManager->RemoveComponent<T>(entity);
 
                 auto signature = entityManager->GetSignature(entity);
-                signature.set(componentManager->GetComponentID<T>(), false);
+                signature.erase(componentManager->GetComponentID<T>());
                 entityManager->SetSignature(entity, signature);
 
                 systemManager->EntitySignatureChanged(entity, signature);
@@ -58,7 +58,7 @@ namespace acheron {
             template<typename... Components>
             Signature MakeSignature() {
                 Signature signature;
-                (signature.set(GetComponentID<Components>()), ...);
+                (signature.insert(GetComponentID<Components>()), ...);
                 return signature;
             }
 

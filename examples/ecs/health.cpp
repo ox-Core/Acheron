@@ -1,7 +1,7 @@
 #include <print>
+#include <chrono>
 
 #include "acheron.hpp"
-#include <chrono>
 
 using namespace acheron;
 
@@ -28,6 +28,7 @@ int main() {
     // systems can be created like this in a lambda. they take in the world, and an entity
     // optionally you can add dt as the last argument for delta time
     world.RegisterSystem<Player, Health>([](ecs::World& world, ecs::Entity entity) {
+        // components are BY REFERENCE, so they can be modified and changed
         auto& health = world.GetComponent<Health>(entity);
         health.value -= 1;
         std::println("health: {}", health.value);

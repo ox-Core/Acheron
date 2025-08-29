@@ -4,7 +4,6 @@
 
 #include <cassert>
 #include <memory>
-#include <set>
 #include <string>
 #include <vector>
 #include <unordered_map>
@@ -22,7 +21,7 @@ namespace acheron {
 
         class System {
             public:
-            std::set<Entity> entities;
+            std::unordered_set<Entity> entities;
 
             virtual void Update(World& world, double dt) {}
         };
@@ -32,7 +31,7 @@ namespace acheron {
 
             template<typename T>
             std::shared_ptr<T> RegisterSystem(SystemStage stage = SystemStage::Update)  {
-                const char* typeName = typeid(T).name();
+                auto typeName = typeid(T).name();
                 static_assert(std::is_base_of<System, T>::value, "Trying to register system that doesnt inherit System");
 
                 assert(systems.find(typeName) == systems.end() && "Duplicate system registration");
@@ -46,7 +45,7 @@ namespace acheron {
 
             template<typename T>
             void SetSignature(Signature signature)  {
-                const char* typeName = typeid(T).name();
+                auto typeName = typeid(T).name();
 
                 assert(systems.find(typeName) != systems.end() && "System used before registration");
 

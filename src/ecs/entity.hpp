@@ -1,8 +1,8 @@
 #pragma once
 
-#include <array>
 #include <cstdint>
 #include <queue>
+#include <unordered_map>
 
 #include "types.hpp"
 
@@ -18,8 +18,8 @@ namespace acheron {
 
             private:
             std::queue<Entity> availableEntities;
-            std::array<Signature, MAX_ENTITIES> signatures;
-            std::uint32_t aliveCount;
+            std::unordered_map<Entity, Signature> signatures;
+            std::uint32_t idCounter = 0;
         };
     };
 };

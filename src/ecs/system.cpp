@@ -6,21 +6,30 @@
 using namespace acheron::ecs;
 
 void SystemManager::EntityDespawned(Entity entity) {
-    for(auto const& pair : systems) {
-        auto const& system = pair.second;
+    for(auto& [_, system] : systems) {
         system->entities.erase(entity);
     }
 }
 
 void SystemManager::EntitySignatureChanged(Entity entity, Signature signature) {
-    for(auto const& pair : systems) {
-        auto const& type = pair.first;
-        auto const& system = pair.second;
-        auto const systemSignature = signatures[type];
+    for(auto& [typeName, system] : systems) {
+        auto const systemSignature = signatures[typeName];
 
-        if((signature & systemSignature) == systemSignature)
-            system->entities.insert(entity);
-        else
-            system->entities.erase(entity);
+        auto it = signatures.find(typeName);
+        if (it == signatures.end()) continue;
+
+        const auto& sysSig = it->second;
+        bool match = true;
+
+        for (auto comp : sysSig) {
+            if (signature.find(comp) == signature.end()) {
+                match = false;
+                break;
+            }
+        }
+
+        if (match) system->entities.insert(entity);
+        else       system->entities.erase(entity);
+
     }
 }

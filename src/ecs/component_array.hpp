@@ -2,63 +2,62 @@
 
 #include "types.hpp"
 
-#include <array>
+#include <vector>
 #include <cassert>
 #include <unordered_map>
 
 namespace acheron {
     namespace ecs {
         class IComponentArray {
-            public:
+        public:
             virtual ~IComponentArray() = default;
             virtual void EntityDespawned(Entity entity) {}
         };
 
         template<typename T>
         class ComponentArray : public IComponentArray {
-            public:
+        public:
             void InsertData(Entity entity, T component) {
                 assert(entityToIndex.find(entity) == entityToIndex.end() && "Duplicate components on entity");
 
-                auto newIndex = size;
+                size_t newIndex = componentArray.size();
                 entityToIndex[entity] = newIndex;
                 indexToEntity[newIndex] = entity;
-                componentArray[newIndex] = component;
-                size++;
+                componentArray.push_back(std::move(component));
             }
 
-            void RemoveData(Entity entity)  {
-                assert(entityToIndex.find(entity) != entityToIndex.end() && "Removal called for component that doesnt exist");
+            void RemoveData(Entity entity) {
+                assert(entityToIndex.find(entity) != entityToIndex.end() && "Removal called for component that doesn't exist");
 
-                auto indexOfRemoved = entityToIndex[entity];
-                auto indexOfLast = size - 1;
-                componentArray[indexOfRemoved] = componentArray[indexOfLast];
+                size_t indexOfRemoved = entityToIndex[entity];
+                size_t indexOfLast = componentArray.size() - 1;
 
-                auto entityOfLast = indexToEntity[indexOfLast];
+                componentArray[indexOfRemoved] = std::move(componentArray[indexOfLast]);
+
+                Entity entityOfLast = indexToEntity[indexOfLast];
                 entityToIndex[entityOfLast] = indexOfRemoved;
                 indexToEntity[indexOfRemoved] = entityOfLast;
 
                 entityToIndex.erase(entity);
                 indexToEntity.erase(indexOfLast);
-                size--;
+                componentArray.pop_back();
             }
 
             T& GetData(Entity entity) {
-                assert(entityToIndex.find(entity) != entityToIndex.end() && "Trying to get Component that doesnt exist");
+                assert(entityToIndex.find(entity) != entityToIndex.end() && "Trying to get Component that doesn't exist");
                 return componentArray[entityToIndex[entity]];
             }
 
             void EntityDespawned(Entity entity) override {
-                if(entityToIndex.find(entity) != entityToIndex.end()) {
+                if (entityToIndex.find(entity) != entityToIndex.end()) {
                     RemoveData(entity);
                 }
             }
 
-            private:
-            std::array<T, MAX_ENTITIES> componentArray;
+        private:
+            std::vector<T> componentArray;
             std::unordered_map<Entity, size_t> entityToIndex;
             std::unordered_map<size_t, Entity> indexToEntity;
-            size_t size;
         };
     }
 }

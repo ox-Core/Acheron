@@ -4,35 +4,36 @@
 
 using namespace acheron::ecs;
 
-EntityManager::EntityManager() {
-    for(Entity e = 0; e < MAX_ENTITIES; e++) {
-        availableEntities.push(e);
-    }
-}
+EntityManager::EntityManager() : idCounter(0) {}
 
 Entity EntityManager::Spawn() {
-    assert(aliveCount < MAX_ENTITIES && "Too many entities");
+    Entity entity;
+    if (!availableEntities.empty()) {
+        entity = availableEntities.front();
+        availableEntities.pop();
+    } else {
+        entity = idCounter++;
+    }
 
-    auto entity = availableEntities.front();
-    availableEntities.pop();
-    aliveCount++;
+    signatures[entity] = {}; // default-initialize an empty signature
     return entity;
 }
 
 void EntityManager::Despawn(Entity entity) {
-    assert(entity < MAX_ENTITIES && "Entity out of range");
-    signatures[entity].reset();
+    auto it = signatures.find(entity);
+    assert(it != signatures.end() && "Entity does not exist");
+    it->second.clear();
+    signatures.erase(it);
 
     availableEntities.push(entity);
-    aliveCount--;
 }
 
 void EntityManager::SetSignature(Entity entity, Signature signature) {
-    assert(entity < MAX_ENTITIES && "Entity out of range");
     signatures[entity] = signature;
 }
 
 Signature EntityManager::GetSignature(Entity entity) {
-    assert(entity < MAX_ENTITIES && "Entity out of range");
-    return signatures[entity];
+    auto it = signatures.find(entity);
+    assert(it != signatures.end() && "Entity does not exist");
+    return it->second;
 }
