@@ -33,19 +33,24 @@ struct HealthSystem : public ecs::System {
 };
 
 int main() {
-    // create the world, this is a wrapper that handles entity, component, and system managers.
+    // create the world, this is a wrapper that handles entity, component, and system managers
     auto world = ecs::World();
 
+    // register components like this
     world.RegisterComponent<Player>();
     world.RegisterComponent<Health>();
 
+    // systems need to have a signature, its used like a constraint.
     world.RegisterSystem<HealthSystem>();
     world.SetSystemSignature<HealthSystem>(world.MakeSignature<Player, Health>());
 
+    // create an entity and add the components on it
     auto player = world.Spawn();
+    // player is just a tag struct
     world.AddComponent(player, Player{});
     world.AddComponent(player, Health{ 20.0 });
 
+    // game loop
     float dt = 0.0;
     while(!quit) {
         auto startTime = std::chrono::high_resolution_clock::now();
