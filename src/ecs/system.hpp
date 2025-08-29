@@ -5,6 +5,7 @@
 #include <cassert>
 #include <memory>
 #include <set>
+#include <string>
 #include <vector>
 #include <unordered_map>
 
@@ -32,6 +33,7 @@ namespace acheron {
             template<typename T>
             std::shared_ptr<T> RegisterSystem(SystemStage stage = SystemStage::Update)  {
                 const char* typeName = typeid(T).name();
+                static_assert(std::is_base_of<System, T>::value, "Trying to register system that doesnt inherit System");
 
                 assert(systems.find(typeName) == systems.end() && "Duplicate system registration");
 
@@ -55,10 +57,8 @@ namespace acheron {
             void EntitySignatureChanged(Entity entity, Signature signature);
 
             std::unordered_map<SystemStage, std::vector<std::shared_ptr<System>>> stageSystems;
-
-            private:
-            std::unordered_map<const char*, std::shared_ptr<System>> systems;
-            std::unordered_map<const char*, Signature> signatures;
+            std::unordered_map<std::string, std::shared_ptr<System>> systems;
+            std::unordered_map<std::string, Signature> signatures;
         };
     }
 }

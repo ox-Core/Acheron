@@ -17,22 +17,6 @@ struct ShouldQuit {
     bool value = false;
 };
 
-// systems are defined by a struct that inherit the system base class
-struct HealthSystem : public ecs::System {
-    // this is the function that is called every frame
-    void Update(ecs::World& world, double dt) override {
-        // iterate through all entities
-        for(auto const& entity : entities) {
-            // components are constrained to what the signature is defined as
-            // if Player had data i could also call this on Player, it isnt index based
-            auto& health = world.GetComponent<Health>(entity);
-            health.value -= 1;
-            std::println("health: {}", health.value);
-            if(health.value <= 0) world.GetSingleton<ShouldQuit>().value = true;
-        }
-    }
-};
-
 int main() {
     // create the world, this is a wrapper that handles entity, component, and system managers
     auto world = ecs::World();
@@ -41,8 +25,14 @@ int main() {
     world.RegisterComponent<Player>();
     world.RegisterComponent<Health>();
 
-    // systems have signatures, its used like a constraint. if it is empty then it is called no matter what
-    world.RegisterSystem<HealthSystem>(world.MakeSignature<Player, Health>());
+    // systems can be created like this in a lambda. they take in the world, and an entity
+    // optionally you can add dt as the last argument for delta time
+    world.RegisterSystem<Player, Health>([](ecs::World& world, ecs::Entity entity) {
+        auto& health = world.GetComponent<Health>(entity);
+        health.value -= 1;
+        std::println("health: {}", health.value);
+        if(health.value <= 0) world.GetSingleton<ShouldQuit>().value = true;
+    });
 
     // create global singleton for when the game should quit
     world.SetSingleton<ShouldQuit>({});

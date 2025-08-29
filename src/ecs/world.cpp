@@ -1,5 +1,7 @@
 #include "world.hpp"
 
+#include <print>
+
 using namespace acheron::ecs;
 
 World::World() {
