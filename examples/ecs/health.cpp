@@ -13,8 +13,9 @@ struct Health {
     float value;
 };
 
-// global variable for quit incase health is zero
-bool quit = false;
+struct ShouldQuit {
+    bool value = false;
+};
 
 // systems are defined by a struct that inherit the system base class
 struct HealthSystem : public ecs::System {
@@ -27,7 +28,7 @@ struct HealthSystem : public ecs::System {
             auto& health = world.GetComponent<Health>(entity);
             health.value -= 1;
             std::println("health: {}", health.value);
-            if(health.value <= 0) quit = true;
+            if(health.value <= 0) world.GetSingleton<ShouldQuit>().value = true;
         }
     }
 };
@@ -44,6 +45,8 @@ int main() {
     world.RegisterSystem<HealthSystem>();
     world.SetSystemSignature<HealthSystem>(world.MakeSignature<Player, Health>());
 
+    world.SetSingleton<ShouldQuit>({});
+
     // create an entity and add the components on it
     auto player = world.Spawn();
     // player is just a tag struct
@@ -52,7 +55,10 @@ int main() {
 
     // game loop
     float dt = 0.0;
-    while(!quit) {
+
+    auto& should_quit = world.GetSingleton<ShouldQuit>();
+
+    while(!should_quit.value) {
         auto startTime = std::chrono::high_resolution_clock::now();
 
 		world.Update(dt);

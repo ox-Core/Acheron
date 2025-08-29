@@ -4,7 +4,9 @@
 #include "system.hpp"
 #include "component.hpp"
 #include "entity.hpp"
+#include <any>
 #include <memory>
+#include <typeindex>
 
 namespace acheron {
     namespace ecs {
@@ -68,12 +70,25 @@ namespace acheron {
                 systemManager->SetSignature<T>(signature);
             }
 
+            template<typename T>
+            void SetSingleton(T value) {
+                singletons[typeid(T)] = std::move(value);
+            }
+
+            template<typename T>
+            T& GetSingleton() {
+                auto it = singletons.find(typeid(T));
+                assert(it != singletons.end() && "Singleton does not exist");
+                return std::any_cast<T&>(it->second);
+            }
+
             void Update(double dt);
 
             private:
             std::unique_ptr<EntityManager> entityManager;
             std::unique_ptr<ComponentManager> componentManager;
             std::unique_ptr<SystemManager> systemManager;
+            std::unordered_map<std::type_index, std::any> singletons;
         };
     }
 }
