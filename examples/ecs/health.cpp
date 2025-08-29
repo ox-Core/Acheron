@@ -41,7 +41,7 @@ int main() {
     world.RegisterComponent<Player>();
     world.RegisterComponent<Health>();
 
-    // systems need to have a signature, its used like a constraint.
+    // systems have signatures, its used like a constraint. if it is empty then it is called no matter what
     world.RegisterSystem<HealthSystem>(world.MakeSignature<Player, Health>());
 
     // create global singleton for when the game should quit
