@@ -57,6 +57,7 @@ int main() {
     // game loop
     float dt = 0.0;
 
+    // this returns a reference so when its changed it will update this, no need to call it every frame
     auto& should_quit = world.GetSingleton<ShouldQuit>();
 
     while(!should_quit.value) {
