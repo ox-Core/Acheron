@@ -56,7 +56,7 @@ namespace acheron {
             template<typename... Components>
             Signature MakeSignature() {
                 Signature signature;
-                (signature.set(GetComponentID<Components>()), ...);  // Set each component bit in the signature
+                (signature.set(GetComponentID<Components>()), ...);
                 return signature;
             }
 
