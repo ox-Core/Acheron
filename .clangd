@@ -1,0 +1,5 @@
+CompileFlags:
+    Add:
+        - "-I../subprojects/raylib/src"
+        - "-I../subprojects/flecs/include"
+        - "-std=c++23"
