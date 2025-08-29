@@ -15,7 +15,7 @@ Entity EntityManager::Spawn() {
         entity = idCounter++;
     }
 
-    signatures[entity] = {}; // default-initialize an empty signature
+    signatures[entity] = {};
     return entity;
 }
 
