@@ -1,5 +1,5 @@
 examples = {
-  'hello': 'basic/hello.cpp'
+  'health': 'ecs/health.cpp'
 }
 
 link_args = []
@@ -14,6 +14,7 @@ foreach name, src : examples
         name,
         src,
         dependencies: [acheron_dep],
+        include_directories: [include_directories('../src')],
         link_args: link_args,
         override_options : ['cpp_std=c++23']
     )

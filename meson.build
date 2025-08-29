@@ -2,6 +2,10 @@ project('acheron', 'cpp')
 
 srcs = [
     'src/acheron.cpp',
+    'src/ecs/component.cpp',
+    'src/ecs/entity.cpp',
+    'src/ecs/system.cpp',
+    'src/ecs/world.cpp',
 ]
 
 include = [
