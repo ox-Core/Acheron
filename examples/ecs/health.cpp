@@ -42,24 +42,23 @@ int main() {
     world.RegisterComponent<Health>();
 
     // systems need to have a signature, its used like a constraint.
-    world.RegisterSystem<HealthSystem>();
-    world.SetSystemSignature<HealthSystem>(world.MakeSignature<Player, Health>());
+    world.RegisterSystem<HealthSystem>(world.MakeSignature<Player, Health>());
 
     // create global singleton for when the game should quit
     world.SetSingleton<ShouldQuit>({});
 
     // create an entity and add the components on it
     auto player = world.Spawn();
+
     // player is just a tag struct
     world.AddComponent(player, Player{});
     world.AddComponent(player, Health{ 20.0 });
 
-    // game loop
-    float dt = 0.0;
-
     // this returns a reference so when its changed it will update this, no need to call it every frame
     auto& should_quit = world.GetSingleton<ShouldQuit>();
 
+    // game loop
+    float dt = 0.0;
     while(!should_quit.value) {
         auto startTime = std::chrono::high_resolution_clock::now();
 

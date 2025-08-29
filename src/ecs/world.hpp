@@ -61,8 +61,8 @@ namespace acheron {
             }
 
             template<typename T>
-            std::shared_ptr<T> RegisterSystem() {
-                return systemManager->RegisterSystem<T>();
+            std::shared_ptr<T> RegisterSystem(Signature signature = {}, SystemStage stage = SystemStage::Update) {
+                return RegisterSystemImpl<T>(stage, signature);
             }
 
             template<typename T>
@@ -82,13 +82,21 @@ namespace acheron {
                 return std::any_cast<T&>(it->second);
             }
 
-            void Update(double dt);
+            void Update(double dt = 0.0);
 
             private:
+            bool hasStarted = false;
             std::unique_ptr<EntityManager> entityManager;
             std::unique_ptr<ComponentManager> componentManager;
             std::unique_ptr<SystemManager> systemManager;
             std::unordered_map<std::type_index, std::any> singletons;
+
+            template<typename T>
+            std::shared_ptr<T> RegisterSystemImpl(SystemStage stage, Signature signature) {
+                auto system = systemManager->RegisterSystem<T>(stage);
+                SetSystemSignature<T>(signature);
+                return system;
+            }
         };
     }
 }

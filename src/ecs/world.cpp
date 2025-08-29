@@ -20,8 +20,16 @@ void World::Despawn(Entity entity) {
 }
 
 void World::Update(double dt) {
-    for(auto const& pair : systemManager->systems) {
-        auto const& system = pair.second;
-        system->Update(*this, dt);
+    if (!hasStarted) {
+        for (auto& system : systemManager->stageSystems[SystemStage::Start]) {
+            system->Update(*this, dt);
+        }
+        hasStarted = true;
+    }
+
+    for (SystemStage stage : {SystemStage::PreUpdate, SystemStage::Update, SystemStage::PostUpdate}) {
+        for (auto& system : systemManager->stageSystems[stage]) {
+            system->Update(*this, dt);
+        }
     }
 }

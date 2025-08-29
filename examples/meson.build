@@ -1,5 +1,6 @@
 examples = {
-  'health': 'ecs/health.cpp'
+  'health': 'ecs/health.cpp',
+  'stages': 'ecs/stages.cpp'
 }
 
 link_args = []

@@ -18,8 +18,8 @@ namespace acheron {
 
                 assert(componentTypes.find(typeName) == componentTypes.end() && "Duplicate registration of component");
 
-                componentTypes.insert({typeName, nextComponentID});
-                componentArrays.insert({typeName, std::make_shared<ComponentArray<T>>()});
+                componentTypes[typeName] = nextComponentID;
+                componentArrays[typeName] = std::make_shared<ComponentArray<T>>();
                 nextComponentID++;
             }
 
