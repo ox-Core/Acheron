@@ -1,3 +1,8 @@
+/** \file file.h
+ * A brief file description.
+ * A more elaborated file description.
+ */
+
 #include <print>
 #include <chrono>
 #include <thread>
@@ -6,7 +11,7 @@
 
 using namespace acheron;
 
-// components that hold data
+/// components that hold data
 
 struct ShouldQuit {
     bool value = false;
@@ -17,17 +22,17 @@ struct FPSCounter {
 };
 
 int main() {
-    // create the world, this is a wrapper that handles entity, component, and system managers
+    /// create the world, this is a wrapper that handles entity, component, and system managers
     auto world = ecs::World();
 
-    // make sure you register the component before usage, it will throw an assertion if not.
+    /// make sure you register the component before usage, it will throw an assertion if not.
     world.RegisterComponent<FPSCounter>();
 
-    // create global singleton for when the game should quit
+    /// create global singleton for when the game should quit
     world.SetSingleton<ShouldQuit>({});
 
-    // systems can be created like this in a lambda. they take in the world, and an entity
-    // optionally you can add dt as the last argument for delta time
+    /// systems can be created like this in a lambda. they take in the world, and an entity
+    /// optionally you can add dt as the last argument for delta time
     world.RegisterSystem([](ecs::World& world, ecs::Entity entity, double dt) {
         auto& fpsCounter = world.GetComponent<FPSCounter>(entity);
         auto& timer = fpsCounter.timer; // can do this too
@@ -39,12 +44,12 @@ int main() {
         }
     });
 
-    // create fps counter and add the component to it
+    /// create fps counter and add the component to it
     auto fpsCounter = world.Spawn();
-    // if there isnt anything passed, the default constructor will be called.
+    /// if there isnt anything passed, the default constructor will be called.
     world.AddComponent<FPSCounter>(fpsCounter);
 
-    // this returns a reference so when its changed it will update this, no need to call it every frame
+    /// this returns a reference so when its changed it will update this, no need to call it every frame
     auto& shouldQuit = world.GetSingleton<ShouldQuit>();
 
     auto lastTime = std::chrono::high_resolution_clock::now();

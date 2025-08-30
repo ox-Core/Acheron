@@ -8,11 +8,22 @@
 #include <utility>
 
 namespace acheron::ecs {
+    /**
+     * @brief Wrapper class for systems to support lambda and function pointers
+     *
+     * @tparam Func System callback
+     */
     template<typename Func>
     class SystemFunction : public System {
         public:
-        explicit SystemFunction(Func&& f) : func(std::forward<Func>(f)) {}
+        explicit SystemFunction(Func&& f) : func(std::forward<Func>(f)) {} ///< System Function Wrapper
 
+        /**
+         * @brief Iterates through all entities associated with system, and call it
+         *
+         * @param world A reference to the World
+         * @param dt Delta Time
+         */
         void Update(World& world, double dt) override {
             if (entities.empty()) {
                 this->template Call<Func>(world, Entity{}, dt);
@@ -26,6 +37,16 @@ namespace acheron::ecs {
         private:
         Func func;
 
+        /**
+         * @brief Wrapper to match the signature and call the internal function the SystemFunction wrapped
+         *
+         * @tparam F The function to match its signature with to confirm its valid
+         * @param world A reference to the World
+         * @param entity The entity that the system matched with
+         * @param dt Delta Time
+         *
+         * @throws Assert failure if the internal function doesnt match certain requirements
+         */
         template<typename F>
         void Call(World& world, Entity entity, double dt) {
             if constexpr (std::is_invocable_v<F, World&, Entity, double>) {

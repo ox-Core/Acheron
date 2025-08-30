@@ -7,14 +7,36 @@
 #include <unordered_map>
 
 namespace acheron::ecs {
+    /**
+     * @brief Interface for component arrays
+     */
     struct IComponentArray {
         virtual ~IComponentArray() = default;
+        /**
+         * @brief Called when an entity is despawned
+         */
         virtual void EntityDespawned(Entity entity) {}
     };
 
+    /**
+     * @brief Container for components
+     *
+     * This class handles the association with entities and components, and holds the data for components
+     *
+     * @tparam T The component type
+     */
     template<typename T>
     class ComponentArray : public IComponentArray {
         public:
+
+        /**
+         * @brief Add a component and its data to an entity
+         *
+         * @param entity The entity to apply the component to
+         * @param component The component to apply to the entity
+         *
+         * @throws Assert Fail if the entity already has component T on it
+         */
         void InsertData(Entity entity, T component) {
             assert(entityToIndex.find(entity) == entityToIndex.end() && "Duplicate components on entity");
 
@@ -24,6 +46,13 @@ namespace acheron::ecs {
             componentArray.push_back(std::move(component));
         }
 
+        /**
+         * @brief Removes a component and its data associated with an entity
+         *
+         * @param entity The entity to remove the component from
+         *
+         * @throws Assert Fail if the component doesnt exist on the entity
+         */
         void RemoveData(Entity entity) {
             assert(entityToIndex.find(entity) != entityToIndex.end() && "Removal called for component that doesn't exist");
 
@@ -41,11 +70,23 @@ namespace acheron::ecs {
             componentArray.pop_back();
         }
 
+        /**
+         * @brief Gets component data from an entity
+         *
+         * @param entity Entity to retrieve the data from
+         *
+         * @return The component data associated with the entity
+         */
         T& GetData(Entity entity) {
             assert(entityToIndex.find(entity) != entityToIndex.end() && "Trying to get Component that doesn't exist");
             return componentArray[entityToIndex[entity]];
         }
 
+        /**
+         * @brief Called when an entity is despawned to remove all its component data
+         *
+         * @param entity Entity that was despawned
+         */
         void EntityDespawned(Entity entity) override {
             if (entityToIndex.find(entity) != entityToIndex.end()) {
                 RemoveData(entity);
@@ -53,8 +94,8 @@ namespace acheron::ecs {
         }
 
         private:
-        std::vector<T> componentArray;
-        std::unordered_map<Entity, size_t> entityToIndex;
-        std::unordered_map<size_t, Entity> indexToEntity;
+        std::vector<T> componentArray; ///< List of component data
+        std::unordered_map<Entity, size_t> entityToIndex; ///< Map to associate an entity to its component index
+        std::unordered_map<size_t, Entity> indexToEntity; ///< Map to associate a component index to an entity
     };
 }
