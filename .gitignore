@@ -2,3 +2,4 @@
 build/
 *.dll
 docs/html
+.vscode

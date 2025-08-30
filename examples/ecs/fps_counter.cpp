@@ -1,8 +1,3 @@
-/** \file file.h
- * A brief file description.
- * A more elaborated file description.
- */
-
 #include <print>
 #include <chrono>
 #include <thread>
@@ -31,8 +26,7 @@ int main() {
     /// create global singleton for when the game should quit
     world.SetSingleton<ShouldQuit>({});
 
-    /// systems can be created like this in a lambda. they take in the world, and an entity
-    /// optionally you can add dt as the last argument for delta time
+    /// systems can be created like this in a lambda. they take in the world, and optionally an entity, and dt for delta time
     world.RegisterSystem([](ecs::World& world, ecs::Entity entity, double dt) {
         auto& fpsCounter = world.GetComponent<FPSCounter>(entity);
         auto& timer = fpsCounter.timer; // can do this too
