@@ -1,0 +1,8 @@
+[wrap-file]
+directory = acheron
+source_url = https://github.com/ox-Core/Acheron/archive/refs/tags/none
+source_filename = acheron.tar.gz
+source_hash = none
+
+[provide]
+meson-depends = acheron
