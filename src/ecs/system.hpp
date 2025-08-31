@@ -102,12 +102,7 @@ namespace acheron::ecs {
          */
         void EntitySignatureChanged(Entity entity, Signature signature);
 
-        std::unordered_map<SystemStage, std::vector<std::shared_ptr<System>>> stageSystems{
-            {SystemStage::Start, {}},
-            {SystemStage::PreUpdate, {}},
-            {SystemStage::Update, {}},
-            {SystemStage::PostUpdate, {}}
-        }; ///< A map of stages and the systems associated with them
+        std::unordered_map<SystemStage, std::vector<std::shared_ptr<System>>> stageSystems; ///< A map of stages and the systems associated with them
         std::unordered_map<std::string, std::shared_ptr<System>> systems; ///< A map of systems and their name
         std::unordered_map<std::string, Signature> signatures; ///< A map of systems name and the signature associated with them
     };
