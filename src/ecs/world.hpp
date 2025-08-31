@@ -8,6 +8,7 @@
 #include "component.hpp"
 #include "entity.hpp"
 
+#include <any>
 #include <memory>
 #include <typeindex>
 
@@ -200,8 +201,7 @@ namespace acheron::ecs {
          */
         template<typename T>
         void SetSingleton(T value) {
-            auto& singletons = GetSingletonMap();
-            singletons[typeid(T)] = std::make_shared<T>(std::move(value));
+            singletons[TypeID<T>()] = std::move(value);
         }
 
         /**
@@ -210,12 +210,12 @@ namespace acheron::ecs {
          * @return Reference to the stored singleton
          * @throws Assert failure if the singleton has not been set
          */
+
         template<typename T>
         T& GetSingleton() {
-            auto& singletons = GetSingletonMap();
-            auto it = singletons.find(typeid(T));
-            assert(it != singletons.end() && "Singleton does not exist");
-            return *static_cast<T*>(it->second.get());
+            auto it = singletons.find(TypeID<T>());
+            assert(it != singletons.end() && "Singleton not set");
+            return std::any_cast<T&>(it->second);
         }
 
         /**
@@ -275,19 +275,37 @@ namespace acheron::ecs {
         void Update(double dt = 0.0);
 
         private:
+
+        /**
+         * @brief Static counter for TypeID(used with singletons)
+         *
+         * @return New TypeID
+         */
+        inline size_t TypeIDCounter() {
+            static size_t c = 0;
+            return c++;
+        }
+
+        /**
+         * @brief Returns a new TypeID per T
+         *
+         * @tparam T The type of the singleton
+         *
+         * @return New static TypeID
+         */
+        template<typename T>
+        size_t TypeID() {
+            static size_t id = TypeIDCounter();
+            return id;
+        }
+
         int counter = 0; ///< Internal counter for anonymous systems.
         bool hasStarted = false; ///< Tracks if the Start stage has run.
         std::unique_ptr<EntityManager> entityManager; ///< Manages entity lifecycle.
         std::unique_ptr<ComponentManager> componentManager; ///< Manages component storage.
         std::unique_ptr<SystemManager> systemManager; ///< Manages system execution.
         std::unique_ptr<EventManager> eventManager; ///< Manages system execution.
-        /**
-         * @brief Gets the singleton map
-         */
-        static std::unordered_map<std::type_index, std::shared_ptr<void>>& GetSingletonMap() {
-            static std::unordered_map<std::type_index, std::shared_ptr<void>> map;
-            return map;
-        }
+        std::unordered_map<size_t, std::any> singletons; ///< Stores singleton instances.
     };
 
     /**
