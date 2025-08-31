@@ -2,6 +2,7 @@ examples = {
   'health': 'ecs/health.cpp',
   'stages': 'ecs/stages.cpp',
   'fps_counter': 'ecs/fps_counter.cpp',
+  'events': 'ecs/events.cpp',
   'module': 'ecs/module.cpp'
 }
 

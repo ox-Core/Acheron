@@ -7,6 +7,7 @@
 #include "types.hpp"
 
 namespace acheron::ecs {
+    class World;
     /**
      * @brief Manages every entity
      */

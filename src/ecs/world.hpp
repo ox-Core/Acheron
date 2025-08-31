@@ -3,6 +3,7 @@
 #include "module.hpp"
 #include "system_function.hpp"
 #include "types.hpp"
+#include "event.hpp"
 #include "system.hpp"
 #include "component.hpp"
 #include "entity.hpp"
@@ -12,6 +13,8 @@
 #include <typeindex>
 
 namespace acheron::ecs {
+    class EntityBuilder;
+
     /**
      * @brief Central context for the ECS
      *
@@ -28,7 +31,7 @@ namespace acheron::ecs {
          * @brief Spawns a new entity
          * @return The newly created entity
          */
-        Entity Spawn();
+        EntityBuilder Spawn();
 
         /**
          * @brief Despawns(destroys) an entity
@@ -55,9 +58,9 @@ namespace acheron::ecs {
          * @param entity The entity receiving the component
          * @param component Optional instance of the component (default constructed if omitted)
          */
-        template<typename T>
-        void AddComponent(Entity entity, T component = {}) {
-            componentManager->AddComponent<T>(entity, component);
+         template<typename T, typename... Args>
+         void AddComponent(Entity entity, Args&&... args) {
+             componentManager->AddComponent<T>(entity, T(std::forward<Args>(args)...));
 
             auto signature = entityManager->GetSignature(entity);
             signature.insert(componentManager->GetComponentID<T>());
@@ -229,6 +232,35 @@ namespace acheron::ecs {
         }
 
         /**
+         * @brief Subscribes a callback to an event
+         *
+         * @tparam T Event type
+         * @param cb Callback to subscribe to the event
+         */
+        template<typename T>
+        void SubscribeEvent(EventManager::Callback<T> cb) {
+            eventManager->Subscribe<T>(*this, cb);
+        }
+
+        /**
+         * @brief Emit an event to the event queue
+         *
+         * @tparam T Event type to emit
+         * @param event Event and its data
+         */
+        template<typename T>
+        void EmitEvent(const T& event) {
+            eventManager->Emit<T>(event);
+        }
+
+        /**
+         * @brief Dispatch events
+         */
+        void DispatchEvents() {
+            eventManager->Dispatch();
+        }
+
+        /**
          * @brief Runs system updates in the world
          *
          * Systems are executed in stage order:
@@ -247,6 +279,38 @@ namespace acheron::ecs {
         std::unique_ptr<EntityManager> entityManager; ///< Manages entity lifecycle.
         std::unique_ptr<ComponentManager> componentManager; ///< Manages component storage.
         std::unique_ptr<SystemManager> systemManager; ///< Manages system execution.
+        std::unique_ptr<EventManager> eventManager; ///< Manages system execution.
         std::unordered_map<std::type_index, std::any> singletons; ///< Stores singleton instances.
+    };
+
+    /**
+     * @brief Wrapper for spawning entities using method-chaining
+     */
+    class EntityBuilder {
+        World& world; ///< Reference to world
+        ecs::Entity entity; ///< Entity thats being built
+
+        public:
+        /**
+         * @brief Constructor
+         */
+        EntityBuilder(World& w, ecs::Entity e) : world(w), entity(e) {}
+
+        /**
+         * @brief Where the real magic happens
+         * Uses perfect forwarding to unwrap arguments and pass them in as a constructor
+         *
+         * @tparam T The component to add to the entity
+         * @param args Arguments to the constructor
+         *
+         * @return Another entity builder so that it can be chained
+         */
+        template<typename T, typename... Args>
+        EntityBuilder& Add(Args&&... args) {
+            world.AddComponent<T>(entity, std::forward<Args>(args)...);
+            return *this;
+        }
+
+        operator ecs::Entity() const { return entity; } ///< Allow implicit conversion back to Entity
     };
 }

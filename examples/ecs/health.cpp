@@ -38,12 +38,10 @@ int main() {
     // create global singleton for when the game should quit
     world.SetSingleton<ShouldQuit>({});
 
-    // create an entity and add the components on it
-    auto player = world.Spawn();
-
-    // player is just a tag struct
-    world.AddComponent(player, Player{});
-    world.AddComponent(player, Health{ 20.0 });
+    // create a player entity and add the components on it
+    world.Spawn()
+        .Add<Player>()
+        .Add<Health>(20.0);
 
     // this returns a reference so when its changed it will update this, no need to call it every frame
     auto& shouldQuit = world.GetSingleton<ShouldQuit>();

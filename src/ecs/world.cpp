@@ -8,10 +8,11 @@ World::World() {
     entityManager = std::make_unique<EntityManager>();
     componentManager = std::make_unique<ComponentManager>();
     systemManager = std::make_unique<SystemManager>();
+    eventManager = std::make_unique<EventManager>();
 }
 
-Entity World::Spawn() {
-    return entityManager->Spawn();
+EntityBuilder World::Spawn() {
+    return EntityBuilder(*this, entityManager->Spawn());
 }
 
 void World::Despawn(Entity entity) {
@@ -34,4 +35,6 @@ void World::Update(double dt) {
             system->Update(*this, dt);
         }
     }
+
+    eventManager->Dispatch();
 }
