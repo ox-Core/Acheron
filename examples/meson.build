@@ -3,6 +3,7 @@ examples = {
   'stages': 'ecs/stages.cpp',
   'fps_counter': 'ecs/fps_counter.cpp',
   'events': 'ecs/events.cpp',
+  'functions_as_systems': 'ecs/functions_as_systems.cpp',
   'module': 'ecs/module.cpp'
 }
 

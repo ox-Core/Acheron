@@ -298,6 +298,7 @@ namespace acheron::ecs {
 
         /**
          * @brief Where the real magic happens
+         *
          * Uses perfect forwarding to unwrap arguments and pass them in as a constructor
          *
          * @tparam T The component to add to the entity
