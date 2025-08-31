@@ -213,8 +213,10 @@ namespace acheron::ecs {
         template<typename T>
         T& GetSingleton() {
             auto it = singletons.find(typeid(T));
-            assert(it != singletons.end());
-            return *std::any_cast<std::shared_ptr<T>&>(it->second);
+            assert(it != singletons.end() && "Singleton does not exist");
+
+            auto ptr = std::any_cast<std::shared_ptr<void>&>(it->second);
+            return *std::static_pointer_cast<T>(ptr);
         }
 
         /**
