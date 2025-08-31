@@ -294,7 +294,7 @@ html.dark-mode {
     --invariant-color-dark: #76ce96;
     --invariant-color-darker: #cceed5;
 
-    --fragment-background: #262626;
+    --fragment-background: #111111;
     --fragment-foreground: #dbe4eb;
     --fragment-keyword: #cc99cd;
     --fragment-keywordtype: #ab99cd;
@@ -1284,7 +1284,7 @@ code,
 div.fragment,
 pre.fragment {
     border-radius: var(--border-radius-small);
-    border: 1px solid var(--separator-color);
+    border: 0px solid var(--separator-color);
     overflow: hidden;
 }
 

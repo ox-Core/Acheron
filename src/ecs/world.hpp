@@ -1,11 +1,12 @@
 #pragma once
 
-#include "ecs/module.hpp"
-#include "ecs/system_function.hpp"
-#include "ecs/types.hpp"
+#include "module.hpp"
+#include "system_function.hpp"
+#include "types.hpp"
 #include "system.hpp"
 #include "component.hpp"
 #include "entity.hpp"
+
 #include <any>
 #include <memory>
 #include <typeindex>
