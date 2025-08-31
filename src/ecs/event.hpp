@@ -81,12 +81,7 @@ namespace acheron::ecs {
     };
 
     /**
-     * @brief Generic component lifecycle event (Add/Remove/Set)
-     *
-     * Example usage:
-     * @code
-     * world.EmitEvent(ComponentAdded<Position>{entity, &pos});
-     * @endcode
+     * @brief Event emitted when a component is added to an entity
      */
     template<typename T>
     struct ComponentAdded {
@@ -94,11 +89,18 @@ namespace acheron::ecs {
         T* component;
     };
 
+    /**
+     * @brief Event emitted when a component is removed from an entity
+     */
     template<typename T>
     struct ComponentRemoved {
         Entity entity;
     };
 
+
+    /**
+     * @brief Event emitted when a component is set on en entity
+     */
     template<typename T>
     struct ComponentSet {
         Entity entity;
