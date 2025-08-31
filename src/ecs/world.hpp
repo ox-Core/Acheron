@@ -201,7 +201,7 @@ namespace acheron::ecs {
          */
         template<typename T>
         void SetSingleton(T value) {
-            singletons[typeid(T)] = std::move(value);
+            singletons[typeid(T)] = std::make_shared<T>(std::move(value));
         }
 
         /**
@@ -213,8 +213,8 @@ namespace acheron::ecs {
         template<typename T>
         T& GetSingleton() {
             auto it = singletons.find(typeid(T));
-            assert(it != singletons.end() && "Singleton does not exist");
-            return std::any_cast<T&>(it->second);
+            assert(it != singletons.end());
+            return *std::any_cast<std::shared_ptr<T>&>(it->second);
         }
 
         /**
