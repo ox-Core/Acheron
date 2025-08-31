@@ -8,7 +8,6 @@
 #include "component.hpp"
 #include "entity.hpp"
 
-#include <any>
 #include <memory>
 #include <typeindex>
 
@@ -201,7 +200,8 @@ namespace acheron::ecs {
          */
         template<typename T>
         void SetSingleton(T value) {
-            singletons[typeid(T)] = std::move(value);
+            auto& singletons = GetSingletonMap();
+            singletons[typeid(T)] = std::make_shared<T>(std::move(value));
         }
 
         /**
@@ -212,9 +212,10 @@ namespace acheron::ecs {
          */
         template<typename T>
         T& GetSingleton() {
+            auto& singletons = GetSingletonMap();
             auto it = singletons.find(typeid(T));
             assert(it != singletons.end() && "Singleton does not exist");
-            return std::any_cast<T&>(it->second);
+            return *static_cast<T*>(it->second.get());
         }
 
         /**
@@ -280,7 +281,13 @@ namespace acheron::ecs {
         std::unique_ptr<ComponentManager> componentManager; ///< Manages component storage.
         std::unique_ptr<SystemManager> systemManager; ///< Manages system execution.
         std::unique_ptr<EventManager> eventManager; ///< Manages system execution.
-        std::unordered_map<std::type_index, std::any> singletons; ///< Stores singleton instances.
+        /**
+         * @brief Gets the singleton map
+         */
+        static std::unordered_map<std::type_index, std::shared_ptr<void>>& GetSingletonMap() {
+            static std::unordered_map<std::type_index, std::shared_ptr<void>> map;
+            return map;
+        }
     };
 
     /**
