@@ -1,5 +1,6 @@
 #pragma once
 
+#include "singleton.hpp"
 #include "module.hpp"
 #include "system_function.hpp"
 #include "types.hpp"
@@ -10,7 +11,6 @@
 
 #include <any>
 #include <memory>
-#include <typeindex>
 
 namespace acheron::ecs {
     class EntityBuilder;
@@ -201,7 +201,7 @@ namespace acheron::ecs {
          */
         template<typename T>
         void SetSingleton(T value) {
-            singletons[TypeID<T>()] = std::move(value);
+            SingletonStorage<T>::Set(std::move(value));
         }
 
         /**
@@ -213,9 +213,7 @@ namespace acheron::ecs {
 
         template<typename T>
         T& GetSingleton() {
-            auto it = singletons.find(TypeID<T>());
-            assert(it != singletons.end() && "Singleton not set");
-            return std::any_cast<T&>(it->second);
+            return SingletonStorage<T>::Get();
         }
 
         /**
@@ -275,30 +273,6 @@ namespace acheron::ecs {
         void Update(double dt = 0.0);
 
         private:
-
-        /**
-         * @brief Static counter for TypeID(used with singletons)
-         *
-         * @return New TypeID
-         */
-        inline size_t TypeIDCounter() {
-            static size_t c = 0;
-            return c++;
-        }
-
-        /**
-         * @brief Returns a new TypeID per T
-         *
-         * @tparam T The type of the singleton
-         *
-         * @return New static TypeID
-         */
-        template<typename T>
-        size_t TypeID() {
-            static size_t id = TypeIDCounter();
-            return id;
-        }
-
         int counter = 0; ///< Internal counter for anonymous systems.
         bool hasStarted = false; ///< Tracks if the Start stage has run.
         std::unique_ptr<EntityManager> entityManager; ///< Manages entity lifecycle.
