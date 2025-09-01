@@ -17,7 +17,8 @@ Entity EntityManager::Spawn() {
         entity = static_cast<Entity>(idCounter++);
     }
 
-    signatures[entity] = {};
+    signatures.emplace(entity, Signature{});
+
     return entity;
 }
 
