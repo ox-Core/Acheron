@@ -12,8 +12,6 @@
 #include <memory>
 
 namespace acheron::ecs {
-    class EntityBuilder;
-
     /**
      * @brief Central context for the ECS
      *
@@ -30,7 +28,7 @@ namespace acheron::ecs {
          * @brief Spawns a new entity
          * @return The newly created entity
          */
-        EntityBuilder Spawn();
+        Entity Spawn();
 
         /**
          * @brief Despawns(destroys) an entity
@@ -278,41 +276,5 @@ namespace acheron::ecs {
         std::unique_ptr<ComponentManager> componentManager; ///< Manages component storage.
         std::unique_ptr<SystemManager> systemManager; ///< Manages system execution.
         std::unique_ptr<EventManager> eventManager; ///< Manages system execution.
-    };
-
-    /**
-     * @brief Wrapper for spawning entities using method-chaining
-     */
-    class EntityBuilder {
-        World* world; ///< Reference to world
-        ecs::Entity entity; ///< Entity thats being built
-
-        public:
-        /**
-         * @brief Constructor
-         */
-        EntityBuilder(World* w, ecs::Entity e) : world(w), entity(e) {
-            std::println("consturctred");
-        }
-
-        /**
-         * @brief Where the real magic happens
-         *
-         * Uses perfect forwarding to unwrap arguments and pass them in as a constructor
-         *
-         * @tparam T The component to add to the entity
-         * @param args Arguments to the constructor
-         *
-         * @return Another entity builder so that it can be chained
-         */
-        template<typename T, typename... Args>
-        EntityBuilder& Add(Args&&... args) {
-            std::println("adding component");
-            world->AddComponent<T>(entity, std::forward<Args>(args)...);
-            std::println("d");
-            return *this;
-        }
-
-        operator ecs::Entity() const { return entity; } ///< Allow implicit conversion back to Entity
     };
 }

@@ -60,15 +60,15 @@ int main() {
     });
 
     // spawn entities with health and damage timer
-    world.Spawn()
-        .Add<Health>(75)
-        .Add<DamageTimer>();
-    world.Spawn()
-        .Add<Health>(55)
-        .Add<DamageTimer>(0.8);
-    world.Spawn()
-        .Add<Health>(30)
-        .Add<DamageTimer>(0.2);
+    auto p1 = world.Spawn();
+    world.AddComponent<Health>(p1, 75);
+    world.AddComponent<DamageTimer>(p1);
+    auto p2 = world.Spawn();
+    world.AddComponent<Health>(p2, 55);
+    world.AddComponent<DamageTimer>(p2, 0.8);
+    auto p3 = world.Spawn();
+    world.AddComponent<Health>(p3, 30);
+    world.AddComponent<DamageTimer>(p3, 0.2);
 
     auto& shouldQuit = world.GetSingleton<ShouldQuit>();
     auto lastTime = std::chrono::high_resolution_clock::now();

@@ -26,9 +26,7 @@ namespace acheron::ecs {
         void RegisterComponent() {
             const char* typeName = typeid(T).name();
 
-            std::println("component comp");
             assert(componentTypes.find(typeName) == componentTypes.end() && "Duplicate registration of component");
-            std::println("component comp finish");
 
             componentTypes[typeName] = nextComponentID;
             componentArrays[typeName] = std::make_shared<ComponentArray<T>>();
@@ -46,9 +44,8 @@ namespace acheron::ecs {
         template<typename T>
         ComponentID GetComponentID() {
             const char* typeName = typeid(T).name();
-            std::println("component comp id");
+
             assert(componentTypes.find(typeName) != componentTypes.end() && "Component not registered before use");
-            std::println("component comp id finish");
 
             return componentTypes[typeName];
         }

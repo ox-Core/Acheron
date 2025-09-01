@@ -11,13 +11,8 @@ World::World() {
     eventManager = std::make_unique<EventManager>();
 }
 
-EntityBuilder World::Spawn() {
-    std::println("world::Spawn top reached");
-    auto e = entityManager->Spawn();
-    std::println("entityManager->Spawn returned");
-    EntityBuilder eb(this, e);
-    std::println("constructed EB, about to return");
-    return eb;
+Entity World::Spawn() {
+    return entityManager->Spawn();
 }
 
 
