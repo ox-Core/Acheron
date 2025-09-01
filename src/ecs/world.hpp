@@ -30,7 +30,7 @@ namespace acheron::ecs {
          * @brief Spawns a new entity
          * @return The newly created entity
          */
-        Entity Spawn();
+        EntityBuilder Spawn();
 
         /**
          * @brief Despawns(destroys) an entity
@@ -284,14 +284,14 @@ namespace acheron::ecs {
      * @brief Wrapper for spawning entities using method-chaining
      */
     class EntityBuilder {
-        World& world; ///< Reference to world
+        World* world; ///< Reference to world
         ecs::Entity entity; ///< Entity thats being built
 
         public:
         /**
          * @brief Constructor
          */
-        EntityBuilder(World& w, ecs::Entity e) : world(w), entity(e) {
+        EntityBuilder(World* w, ecs::Entity e) : world(w), entity(e) {
             std::println("consturctred");
         }
 
@@ -308,7 +308,7 @@ namespace acheron::ecs {
         template<typename T, typename... Args>
         EntityBuilder& Add(Args&&... args) {
             std::println("adding component");
-            world.AddComponent<T>(entity, std::forward<Args>(args)...);
+            world->AddComponent<T>(entity, std::forward<Args>(args)...);
             std::println("d");
             return *this;
         }
