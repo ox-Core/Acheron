@@ -12,6 +12,7 @@ World::World() {
 }
 
 EntityBuilder World::Spawn() {
+    std::println("spawnningngng entity bukldiung");
     return EntityBuilder(*this, entityManager->Spawn());
 }
 

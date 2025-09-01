@@ -293,7 +293,9 @@ namespace acheron::ecs {
         /**
          * @brief Constructor
          */
-        EntityBuilder(World& w, ecs::Entity e) : world(w), entity(e) {}
+        EntityBuilder(World& w, ecs::Entity e) : world(w), entity(e) {
+            std::println("consturctred");
+        }
 
         /**
          * @brief Where the real magic happens
@@ -307,7 +309,9 @@ namespace acheron::ecs {
          */
         template<typename T, typename... Args>
         EntityBuilder& Add(Args&&... args) {
+            std::println("adding component");
             world.AddComponent<T>(entity, std::forward<Args>(args)...);
+            std::println("d");
             return *this;
         }
 
