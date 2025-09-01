@@ -9,7 +9,6 @@
 #include "component.hpp"
 #include "entity.hpp"
 
-#include <any>
 #include <memory>
 
 namespace acheron::ecs {
@@ -279,7 +278,6 @@ namespace acheron::ecs {
         std::unique_ptr<ComponentManager> componentManager; ///< Manages component storage.
         std::unique_ptr<SystemManager> systemManager; ///< Manages system execution.
         std::unique_ptr<EventManager> eventManager; ///< Manages system execution.
-        std::unordered_map<size_t, std::any> singletons; ///< Stores singleton instances.
     };
 
     /**
