@@ -1,6 +1,7 @@
 #include "entity.hpp"
 
 #include <cassert>
+#include <print>
 
 using namespace acheron::ecs;
 
@@ -8,6 +9,7 @@ EntityManager::EntityManager() : idCounter(0) {}
 
 Entity EntityManager::Spawn() {
     Entity entity;
+    std::println("spawning");
     if (!availableEntities.empty()) {
         entity = availableEntities.front();
         availableEntities.pop();
@@ -16,6 +18,8 @@ Entity EntityManager::Spawn() {
     }
 
     signatures[entity] = {};
+    std::println("spawned");
+
     return entity;
 }
 

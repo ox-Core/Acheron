@@ -112,9 +112,7 @@ namespace acheron::ecs {
         template<typename T>
         std::shared_ptr<ComponentArray<T>> GetComponentArray() {
             const char* typeName = typeid(T).name();
-            std::println("get");
             assert(componentTypes.find(typeName) != componentTypes.end() && "Component not registered before use");
-            std::println("get done");
             return std::static_pointer_cast<ComponentArray<T>>(componentArrays[typeName]);
         }
     };
