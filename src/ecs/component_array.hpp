@@ -39,9 +39,7 @@ namespace acheron::ecs {
          * @throws Assert Fail if the entity already has component T on it
          */
         void InsertData(Entity entity, T component) {
-            std::println("data comp");
             assert(entityToIndex.find(entity) == entityToIndex.end() && "Duplicate components on entity");
-            std::println("data comp end");
 
             size_t newIndex = componentArray.size();
             entityToIndex[entity] = newIndex;

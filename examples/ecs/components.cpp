@@ -16,7 +16,7 @@ int main() {
     std::println("Register end");
 
     std::println("spawn start");
-    world.Spawn()
-        .Add<TestComponent>();
+    auto e = world.Spawn();
+    world.AddComponent<TestComponent>(e);
     std::println("spawn end");
 }
