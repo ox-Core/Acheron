@@ -30,7 +30,7 @@ namespace acheron::ecs {
          * @brief Spawns a new entity
          * @return The newly created entity
          */
-        EntityBuilder Spawn();
+        Entity Spawn();
 
         /**
          * @brief Despawns(destroys) an entity
