@@ -60,7 +60,7 @@ namespace acheron::ecs {
          */
          template<typename T, typename... Args>
          void AddComponent(Entity entity, Args&&... args) {
-             componentManager->AddComponent<T>(entity, T(std::forward<Args>(args)...));
+            componentManager->AddComponent<T>(entity, T(std::forward<Args>(args)...));
 
             auto signature = entityManager->GetSignature(entity);
             signature.insert(componentManager->GetComponentID<T>());
