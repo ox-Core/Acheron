@@ -1,6 +1,7 @@
 #include "system.hpp"
 #include "ecs/types.hpp"
 
+#include <print>
 #include <cassert>
 
 using namespace acheron::ecs;
@@ -16,16 +17,20 @@ void SystemManager::EntitySignatureChanged(Entity entity, Signature signature) {
         auto const systemSignature = signatures[typeName];
 
         auto it = signatures.find(typeName);
+        std::println("comp1");
         if (it == signatures.end()) continue;
+        std::println("comp1f");
 
         const auto& sysSig = it->second;
         bool match = true;
 
         for (auto comp : sysSig) {
+            std::println("comp2");
             if (signature.find(comp) == signature.end()) {
                 match = false;
                 break;
             }
+            std::println("comp2f");
         }
 
         if (match) system->entities.insert(entity);

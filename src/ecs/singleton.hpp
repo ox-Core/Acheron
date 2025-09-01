@@ -17,8 +17,8 @@ namespace acheron::ecs {
          *
          * @param value The value of the singleton
          */
-        static void Set(T value) {
-            instance() = std::move(value);
+        static void Set(const T& value) {
+            instance() = value;
             initialized() = true;
         }
 
