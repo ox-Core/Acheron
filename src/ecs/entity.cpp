@@ -8,8 +8,17 @@ using namespace acheron::ecs;
 EntityManager::EntityManager() : idCounter(0) {}
 
 Entity EntityManager::Spawn() {
-    std::println("HI");
-    return idCounter++;
+    Entity entity;
+
+    if (!availableEntities.empty()) {
+        entity = availableEntities.back();
+        availableEntities.pop_back();
+    } else {
+        entity = static_cast<Entity>(idCounter++);
+    }
+
+    signatures[entity] = {};
+    return entity;
 }
 
 void EntityManager::Despawn(Entity entity) {

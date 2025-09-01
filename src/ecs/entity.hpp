@@ -50,7 +50,7 @@ namespace acheron::ecs {
         Signature GetSignature(Entity entity);
 
         private:
-        std::vector<Entity> availableEntities; ///< Queue for the available entity IDs
+        std::vector<Entity> availableEntities; ///< Vector for the available entity IDs
         std::unordered_map<Entity, Signature> signatures; ///< Map for entities and their associated signature
         Entity idCounter = 0; ///< Counter to apply an ID to a newly created entity
     };
