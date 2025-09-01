@@ -9,15 +9,15 @@ EntityManager::EntityManager() : idCounter(0) {}
 
 Entity EntityManager::Spawn() {
     Entity entity;
+
     if (!availableEntities.empty()) {
-        entity = availableEntities.front();
-        availableEntities.pop();
+        entity = availableEntities.back();
+        availableEntities.pop_back();
     } else {
-        entity = idCounter++;
+        entity = static_cast<Entity>(idCounter++);
     }
 
     signatures[entity] = {};
-
     return entity;
 }
 
@@ -27,7 +27,7 @@ void EntityManager::Despawn(Entity entity) {
     it->second.clear();
     signatures.erase(it);
 
-    availableEntities.push(entity);
+    availableEntities.push_back(entity);
 }
 
 void EntityManager::SetSignature(Entity entity, Signature signature) {
