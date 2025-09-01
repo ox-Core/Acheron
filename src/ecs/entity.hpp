@@ -1,6 +1,5 @@
 #pragma once
 
-#include <cstdint>
 #include <queue>
 #include <unordered_map>
 
@@ -53,6 +52,6 @@ namespace acheron::ecs {
         private:
         std::queue<Entity> availableEntities; ///< Queue for the available entity IDs
         std::unordered_map<Entity, Signature> signatures; ///< Map for entities and their associated signature
-        std::uint32_t idCounter = 0; ///< Counter to apply an ID to a newly created entity
+        Entity idCounter = 0; ///< Counter to apply an ID to a newly created entity
     };
 };
