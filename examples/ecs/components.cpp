@@ -15,11 +15,6 @@ int main() {
     world.RegisterComponent<TestComponent>();
     std::println("Register end");
 
-    std::println("spawn start");
-    auto e = world.Spawn();
-    std::println("component add");
-    world.AddComponent<TestComponent>(e);
-    std::println("component add done");
-
+    { std::println("about to call Spawn directly via function pointer"); auto pf = &ecs::World::Spawn; auto e = (world.*pf)(); std::println("returned from pointer call"); }
     std::println("spawn end");
 }
