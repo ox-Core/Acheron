@@ -5,7 +5,7 @@
 
 using namespace acheron::ecs;
 
-EntityManager::EntityManager() : idCounter(0) {}
+EntityManager::EntityManager() : idCounter(1) {}
 
 Entity EntityManager::Spawn() {
     Entity entity;

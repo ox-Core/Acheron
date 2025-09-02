@@ -6,6 +6,7 @@ srcs = [
     'src/ecs/entity.cpp',
     'src/ecs/system.cpp',
     'src/ecs/world.cpp',
+    'src/modules/window/window.cpp',
 ]
 
 include = [
@@ -13,6 +14,8 @@ include = [
 ]
 
 cc = meson.get_compiler('cpp')
+
+glfw_dep = dependency('glfw3')
 
 m_dep = cc.find_library('m', required : false)
 gdi32_dep = cc.find_library('gdi32', required : false)
@@ -27,6 +30,7 @@ dependencies = [
     m_dep,
     gdi32_dep,
     winmm_dep,
+    glfw_dep,
 ]
 
 acheron_lib = library(

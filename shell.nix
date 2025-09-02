@@ -12,10 +12,13 @@
       xorg.libXi
       xorg.libxcb
       xorg.xeyes
+      tree
       glfw
+      mesa
       libGL
       gdb
       valgrind
+      pkg-config
       doxygen
       doxygen_gui
       live-server

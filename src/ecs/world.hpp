@@ -56,6 +56,7 @@ namespace acheron::ecs {
             };
 
             (check_override(overrides), ...);
+            (void)check_override;
 
             (AddOrDefault<Cs>(e, std::forward<Overrides>(overrides)...), ...);
             return e;
@@ -261,6 +262,18 @@ namespace acheron::ecs {
         template<typename T>
         T& GetSingleton() {
             return SingletonStorage<T>::Get();
+        }
+
+        /**
+         * @brief Checks if singleton is set
+         *
+         * @tparam T The singleton to check
+         *
+         * @return If the singleton is set or not
+         */
+        template<typename T>
+        bool IsSingletonSet() {
+            return SingletonStorage<T>::IsSet();
         }
 
         /**

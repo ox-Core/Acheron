@@ -3,3 +3,6 @@ build/
 *.dll
 docs/html
 .vscode
+
+subprojects/*
+!subprojects/*.wrap

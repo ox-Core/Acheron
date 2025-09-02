@@ -32,6 +32,15 @@ namespace acheron::ecs {
             return instance();
         }
 
+        /**
+         * @brief Check if the singleton is set
+         *
+         * @return A bool for if the singleton has been set or not
+         */
+        static bool IsSet() {
+            return initialized();
+        }
+
         private:
         /**
          * @brief Where the data lives for the instance
