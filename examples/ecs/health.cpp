@@ -39,9 +39,7 @@ int main() {
     world.SetSingleton<ShouldQuit>({});
 
     // create a player entity and add the components on it
-    auto player = world.Spawn();
-    world.AddComponent<Player>(player);
-    world.AddComponent<Health>(player, 20.0);
+    world.SpawnWith<Player, Health>(Health{20});
 
     // this returns a reference so when its changed it will update this, no need to call it every frame
     auto& shouldQuit = world.GetSingleton<ShouldQuit>();

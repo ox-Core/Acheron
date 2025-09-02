@@ -4,7 +4,6 @@ examples = {
   'fps_counter': 'ecs/fps_counter.cpp',
   'events': 'ecs/events.cpp',
   'functions_as_systems': 'ecs/functions_as_systems.cpp',
-  'singleton': 'ecs/singleton.cpp',
   'module': 'ecs/module.cpp',
 }
 

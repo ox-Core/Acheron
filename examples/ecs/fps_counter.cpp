@@ -38,8 +38,7 @@ int main() {
     });
 
     // create an entity and add the FPSCounter component to it
-    auto fpsCounter = world.Spawn();
-    world.AddComponent<FPSCounter>(fpsCounter);
+    world.SpawnWith<FPSCounter>();
 
     // this returns a reference so when its changed it will update this, no need to call it every frame
     auto& shouldQuit = world.GetSingleton<ShouldQuit>();
