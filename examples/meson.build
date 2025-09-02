@@ -6,7 +6,6 @@ examples = {
   'functions_as_systems': 'ecs/functions_as_systems.cpp',
   'singleton': 'ecs/singleton.cpp',
   'module': 'ecs/module.cpp',
-  'components': 'ecs/components.cpp'
 }
 
 link_args = []

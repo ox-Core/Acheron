@@ -31,6 +31,37 @@ namespace acheron::ecs {
         Entity Spawn();
 
         /**
+         * @brief Spawns an entity with components
+         *
+         * Example:
+         * \code{.cpp}
+         * world.SpawnWith<Player, Health>(Health{20});
+         * \endcode
+         *
+         * @tparam Cs Components that are to be added to the entity
+         * @tparam Overrides The actual component data passed to the function
+         * @param overrides Same as the template parameter Overrides
+         *
+         * @throws Static Assert Fail if Overrides has a type Cs doesnt contain
+         * @return The newly created entity with the components specified
+         */
+        template<typename... Cs, typename... Overrides>
+        Entity SpawnWith(Overrides&&... overrides) {
+            Entity e = Spawn();
+
+            auto check_override = [](auto&& override_val) {
+                using T = std::decay_t<decltype(override_val)>;
+                static_assert((std::disjunction_v<std::is_same<T, Cs>...>),
+                              "Override type not in component list!");
+            };
+
+            (check_override(overrides), ...);
+
+            (AddOrDefault<Cs>(e, std::forward<Overrides>(overrides)...), ...);
+            return e;
+        }
+
+        /**
          * @brief Despawns(destroys) an entity
          * Cleans up all associated components and notifies systems
          * @param entity The entity to remove
@@ -207,7 +238,6 @@ namespace acheron::ecs {
          * @return Reference to the stored singleton
          * @throws Assert failure if the singleton has not been set
          */
-
         template<typename T>
         T& GetSingleton() {
             return SingletonStorage<T>::Get();
@@ -270,6 +300,36 @@ namespace acheron::ecs {
         void Update(double dt = 0.0);
 
         private:
+
+        /**
+         * @brief Adds a component to an entity with its value or default
+         *
+         * Checks if the overrides contains a value for the component, if not, use its default constructor.
+         *
+         * @tparam C Component type to check for
+         * @tparam Overrides overrides to check for values on
+         *
+         * @param e entity to add component to
+         * @param overrides Same as the template parameter Overrides
+         */
+        template<typename C, typename... Overrides>
+        void AddOrDefault(Entity entity, Overrides&&... overrides) {
+            bool added = false;
+            // just wanted to write this here
+            // ooooo scary folding expressions ooo scary c++ :fearful:
+            (
+                [&] {
+                    if constexpr(std::is_same_v<std::decay_t<Overrides>, C>) {
+                        AddComponent<C>(entity, std::forward<Overrides>(overrides));
+                        added = true;
+                    }
+                }(),
+                ...
+            );
+
+            if (!added) AddComponent<C>(entity);
+        }
+
         int counter = 0; ///< Internal counter for anonymous systems.
         bool hasStarted = false; ///< Tracks if the Start stage has run.
         std::unique_ptr<EntityManager> entityManager; ///< Manages entity lifecycle.

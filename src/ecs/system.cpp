@@ -17,9 +17,7 @@ void SystemManager::EntitySignatureChanged(Entity entity, Signature signature) {
         auto const systemSignature = signatures[typeName];
 
         auto it = signatures.find(typeName);
-        std::println("comp1");
         if (it == signatures.end()) continue;
-        std::println("comp1f");
 
         const auto& sysSig = it->second;
         bool match = true;
