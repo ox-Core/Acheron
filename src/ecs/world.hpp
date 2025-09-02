@@ -63,13 +63,16 @@ namespace acheron::ecs {
 
         /**
          * @brief Despawns(destroys) an entity
+         *
          * Cleans up all associated components and notifies systems
+         *
          * @param entity The entity to remove
          */
         void Despawn(Entity entity);
 
         /**
          * @brief Registers a new component type with the ECS
+         *
          * @tparam T The component type to register
          */
         template<typename T>
@@ -118,8 +121,11 @@ namespace acheron::ecs {
 
         /**
          * @brief Retrieves a reference to a component on an entity
+         *
          * @tparam T Component type
+         *
          * @param entity The entity to query
+         *
          * @return Reference to the component
          */
         template<typename T>
@@ -139,7 +145,9 @@ namespace acheron::ecs {
 
         /**
          * @brief Creates a signature that includes all specified component types
+         *
          * @tparam Components... Variadic list of component types
+         *
          * @return Signature representing the component set
          */
         template<typename... Components>
@@ -153,8 +161,10 @@ namespace acheron::ecs {
          * @brief Registers a system of type T
          *
          * @tparam T System type (must inherit from System)
+         *
          * @param signature The component signature this system cares about (default empty)
          * @param stage The update stage to run this system in (default Update)
+         *
          * @return Shared pointer to the created system
          */
         template<typename T>
@@ -170,9 +180,11 @@ namespace acheron::ecs {
          * Allows flexible system definition without requiring a class
          *
          * @tparam Func Callable type.
+         *
          * @param func The system function/lambda
          * @param signature Component signature this system cares about (default empty)
          * @param stage Update stage to run the system in (default Update)
+         *
          * @return Shared pointer to the created system
          */
         template<typename Func>
@@ -202,8 +214,10 @@ namespace acheron::ecs {
          *
          * @tparam Components... The component types the system operates on
          * @tparam Func Callable type
+         *
          * @param func The system function/lambda
          * @param stage The update stage (default Update)
+         *
          * @return Shared pointer to the created system
          */
         template<typename... Components, typename Func>
@@ -214,7 +228,9 @@ namespace acheron::ecs {
 
         /**
          * @brief Sets the component signature for a system
+         *
          * @tparam T System type
+         *
          * @param signature The signature to associate with the system
          */
         template<typename T>
@@ -224,7 +240,9 @@ namespace acheron::ecs {
 
         /**
          * @brief Stores a singleton instance in the world
+         *
          * @tparam T Singleton type
+         *
          * @param value The instance to store
          */
         template<typename T>
@@ -234,7 +252,9 @@ namespace acheron::ecs {
 
         /**
          * @brief Retrieves a singleton instance from the world
+         *
          * @tparam T Singleton type
+         *
          * @return Reference to the stored singleton
          * @throws Assert failure if the singleton has not been set
          */
@@ -247,6 +267,7 @@ namespace acheron::ecs {
          * @brief Imports a module into the world
          *
          * The module must inherit from Module
+         *
          * @tparam T Module type
          */
         template<typename T>
@@ -261,6 +282,7 @@ namespace acheron::ecs {
          * @brief Subscribes a callback to an event
          *
          * @tparam T Event type
+         *
          * @param cb Callback to subscribe to the event
          */
         template<typename T>
@@ -272,6 +294,7 @@ namespace acheron::ecs {
          * @brief Emit an event to the event queue
          *
          * @tparam T Event type to emit
+         *
          * @param event Event and its data
          */
         template<typename T>
