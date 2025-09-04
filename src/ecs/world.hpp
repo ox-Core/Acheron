@@ -31,6 +31,22 @@ namespace acheron::ecs {
         Entity Spawn();
 
         /**
+         * @brief Creates a stage before another
+         *
+         * @param name The name of the system to register before
+         * @param after The system that will be after the registered stage
+         */
+        void AddStageBefore(std::string name, std::string after);
+
+        /**
+         * @brief Creates a stage before another
+         *
+         * @param name The name of the system to register after
+         * @param after The system that will be before the registered stage
+         */
+        void AddStageAfter(std::string name, std::string before);
+
+        /**
          * @brief Spawns an entity with components
          *
          * Example:
@@ -169,7 +185,7 @@ namespace acheron::ecs {
          * @return Shared pointer to the created system
          */
         template<typename T>
-        std::shared_ptr<T> RegisterSystem(Signature signature = {}, SystemStage stage = SystemStage::Update) {
+        std::shared_ptr<T> RegisterSystem(Signature signature = {}, std::string stage = "Update") {
             auto system = systemManager->RegisterSystem<T>(stage);
             SetSystemSignature<T>(signature);
             return system;
@@ -189,7 +205,7 @@ namespace acheron::ecs {
          * @return Shared pointer to the created system
          */
         template<typename Func>
-        std::shared_ptr<System> RegisterSystemExplicit(Func&& func, Signature signature = {}, SystemStage stage = SystemStage::Update) {
+        std::shared_ptr<System> RegisterSystemExplicit(Func&& func, Signature signature = {}, std::string stage = "Update") {
             using SystemType = SystemFunction<std::decay_t<Func>>;
             auto systemFunc = std::make_shared<SystemType>(std::forward<Func>(func));
 
@@ -198,7 +214,7 @@ namespace acheron::ecs {
 
             systemManager->systems[typeName] = systemFunc;
             systemManager->signatures[typeName] = signature;
-            systemManager->stageSystems[stage].push_back(systemFunc);
+            systemManager->stageSystems[systemManager->GetStageOrFail(stage)].push_back(systemFunc);
 
             return systemFunc;
         }
@@ -222,7 +238,7 @@ namespace acheron::ecs {
          * @return Shared pointer to the created system
          */
         template<typename... Components, typename Func>
-        std::shared_ptr<System> RegisterSystem(Func&& func, SystemStage stage = SystemStage::Update) {
+        std::shared_ptr<System> RegisterSystem(Func&& func, std::string stage = "Update") {
             auto signature = MakeSignature<Components...>();
             return RegisterSystemExplicit(std::forward<Func>(func), signature, stage);
         }

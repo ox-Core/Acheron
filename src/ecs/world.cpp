@@ -9,12 +9,28 @@ World::World() {
     componentManager = std::make_unique<ComponentManager>();
     systemManager = std::make_unique<SystemManager>();
     eventManager = std::make_unique<EventManager>();
+
+    systemManager->GetOrCreateStage("Start");
+    systemManager->StageAfter("PreUpdate", "Start");
+    systemManager->StageAfter("Update", "PreUpdate");
+    systemManager->StageAfter("PostUpdate", "Update");
+
+    systemManager->PopulateStages();
+}
+
+void World::AddStageBefore(std::string name, std::string after) {
+    systemManager->StageBefore(name, after);
+    systemManager->PopulateStages();
+}
+
+void World::AddStageAfter(std::string name, std::string before) {
+    systemManager->StageAfter(name, before);
+    systemManager->PopulateStages();
 }
 
 Entity World::Spawn() {
     return entityManager->Spawn();
 }
-
 
 void World::Despawn(Entity entity) {
     entityManager->Despawn(entity);
@@ -24,18 +40,15 @@ void World::Despawn(Entity entity) {
 }
 
 void World::Update(double dt) {
-    if (!hasStarted) {
-        for (auto& system : systemManager->stageSystems[SystemStage::Start]) {
-            system->Update(*this, dt);
-        }
-        hasStarted = true;
-    }
+    for (SystemStageID stage : systemManager->orderedStages) {
+        if (stage == systemManager->GetStageOrFail("Start") && hasStarted) continue;
 
-    for (SystemStage stage : {SystemStage::PreUpdate, SystemStage::Update, SystemStage::PostUpdate}) {
         for (auto& system : systemManager->stageSystems[stage]) {
             system->Update(*this, dt);
         }
     }
+
+    hasStarted = true;
 
     eventManager->Dispatch();
 }

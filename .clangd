@@ -1,5 +1,4 @@
 CompileFlags:
     Add:
-        - "-I../subprojects/raylib/src"
-        - "-I../subprojects/flecs/include"
+        - "-I../subprojects/glfw-3.4/include"
         - "-std=c++23"

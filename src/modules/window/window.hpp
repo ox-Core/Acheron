@@ -27,7 +27,7 @@ namespace acheron::window {
     /**
      * @brief Module to import to create the window
      */
-    struct WindowModule: ecs::Module {
+    struct WindowModule : ecs::Module {
         void Register(ecs::World& world) override;
     };
 }

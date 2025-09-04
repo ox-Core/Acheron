@@ -13,4 +13,6 @@ namespace acheron::ecs {
      * This describes which components are associated with entities and systems.
      */
     using Signature = std::unordered_set<ComponentID>;
+
+    using SystemStageID = std::uint64_t; ///< System Stage ID
 }

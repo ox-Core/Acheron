@@ -8,23 +8,25 @@ int main() {
     // create the world, this is a wrapper that handles entity, component, and system managers
     auto world = ecs::World();
 
+    // stages that exist by default are Start, PreUpdate, Update, and PostUpdate
+
     // register systems, this should be pretty self-explanatory
     world.RegisterSystem([](ecs::World& world) {
         std::println("This is in the start stage");
-    }, ecs::SystemStage::Start);
+    }, "Start");
 
     world.RegisterSystem([](ecs::World& world) {
         std::println("This is in the pre update stage");
-    }, ecs::SystemStage::PreUpdate);
+    }, "PreUpdate");
 
     // this is the default, you can omit the stage here
     world.RegisterSystem([](ecs::World& world) {
         std::println("This is in the update stage");
-    }, ecs::SystemStage::Update);
+    }, "Update");
 
     world.RegisterSystem([](ecs::World& world) {
         std::println("This is in the post update stage");
-    }, ecs::SystemStage::PostUpdate);
+    }, "PostUpdate");
 
     // just iterate 3 times to demonstrate the start system vs the update systems
     int counter = 0;
