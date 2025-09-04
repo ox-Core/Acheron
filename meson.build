@@ -15,7 +15,7 @@ include = [
 
 cc = meson.get_compiler('cpp')
 
-glfw_dep = dependency('glfw3')
+glfw_dep = dependency('glfw3', static : true)
 
 m_dep = cc.find_library('m', required : false)
 gdi32_dep = cc.find_library('gdi32', required : false)
