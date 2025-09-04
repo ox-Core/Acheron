@@ -11,6 +11,7 @@ examples = {
 link_args = []
 if host_machine.system() == 'windows'
     link_args += ['-lstdc++exp']
+    link_args += ['-lgdi32', '-lkernel32', '-lshell32', '-luser32']
 endif
 
 acheron_dep = dependency('acheron')
