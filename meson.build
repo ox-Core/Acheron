@@ -17,6 +17,7 @@ cc = meson.get_compiler('cpp')
 
 glfw_proj = subproject('glfw')
 glfw_dep = glfw_proj.get_variable('glfw_dep')
+glfw_lib = glfw_proj.get_variable('glfw_lib')
 
 m_dep = cc.find_library('m', required : false)
 gdi32_dep = cc.find_library('gdi32', required : false)
@@ -40,6 +41,7 @@ acheron_lib = library(
     meson.project_name(),
     srcs,
     include_directories: include,
+    link_with: [glfw_lib],
     dependencies: dependencies,
     link_args: link_args,
     cpp_args: cpp_args,
