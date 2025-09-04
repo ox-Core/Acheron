@@ -15,7 +15,8 @@ include = [
 
 cc = meson.get_compiler('cpp')
 
-glfw_dep = dependency('glfw3', static : true)
+glfw_proj = subproject('glfw')
+glfw_dep = glfw_proj.get_variable('glfw_dep')
 
 m_dep = cc.find_library('m', required : false)
 gdi32_dep = cc.find_library('gdi32', required : false)
@@ -24,6 +25,13 @@ winmm_dep = cc.find_library('winmm', required : false)
 link_args = []
 if host_machine.system() == 'windows'
     link_args += ['-lstdc++exp']
+endif
+
+cpp_args = []
+if host_machine.system() == 'windows'
+    cpp_args += ['/MT']
+else
+    cpp_args += ['-static-libgcc', '-static-libstdc++']
 endif
 
 dependencies = [
@@ -39,6 +47,7 @@ acheron_lib = library(
     include_directories: include,
     dependencies: dependencies,
     link_args: link_args,
+    cpp_args: cpp_args,
     override_options : ['cpp_std=c++23']
 )
 
