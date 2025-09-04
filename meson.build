@@ -27,12 +27,7 @@ if host_machine.system() == 'windows'
     link_args += ['-lstdc++exp']
 endif
 
-cpp_args = []
-if host_machine.system() == 'windows'
-    cpp_args += ['/MT']
-else
-    cpp_args += ['-static-libgcc', '-static-libstdc++']
-endif
+cpp_args = ['-static-libgcc', '-static-libstdc++']
 
 dependencies = [
     m_dep,
