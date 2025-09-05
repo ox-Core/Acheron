@@ -7,6 +7,7 @@ srcs = [
     'src/ecs/system.cpp',
     'src/ecs/world.cpp',
     'src/modules/window/window.cpp',
+    'src/modules/renderer/renderer.cpp',
 ]
 
 include = [

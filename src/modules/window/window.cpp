@@ -1,6 +1,6 @@
 #include "window.hpp"
 
-#include <GLFW/glfw3.h>
+#include "agl/agl.hpp"
 #include <stdexcept>
 
 using namespace acheron::window;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../acheron.hpp"
+#include "acheron.hpp"
 
 namespace acheron::window {
     /**

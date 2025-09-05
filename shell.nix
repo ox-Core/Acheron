@@ -13,9 +13,8 @@
       xorg.libxcb
       xorg.xeyes
       tree
-      glfw
       mesa
-      libGL
+      libGL.dev
       gdb
       valgrind
       pkg-config
