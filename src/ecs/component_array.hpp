@@ -48,6 +48,17 @@ namespace acheron::ecs {
         }
 
         /**
+         * @brief Checks if en entity has a component
+         *
+         * @param entity The entity to check
+         *
+         * @return If component has entity
+         */
+        bool HasData(Entity entity) const {
+            return entityToIndex.find(entity) != entityToIndex.end();
+        }
+
+        /**
          * @brief Removes a component and its data associated with an entity
          *
          * @param entity The entity to remove the component from

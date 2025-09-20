@@ -98,6 +98,34 @@ namespace acheron::ecs {
         }
 
         /**
+         * @brief Checks if en entity has a component
+         *
+         * @param entity The entity to check
+         *
+         * @return If component has entity
+         */
+        template<typename T>
+        bool HasComponent(Entity entity) {
+            return componentManager->HasComponent<T>(entity);
+        }
+
+        template<typename... Components, typename Func>
+        void View(Func&& func) {
+            Signature required = MakeSignature<Components...>();
+
+            for (auto& [entity, sig] : entityManager->signatures) {
+                bool match = std::includes(
+                    sig.begin(), sig.end(),
+                    required.begin(), required.end()
+                );
+
+                if (match) {
+                    func(entity, GetComponent<Components>(entity)...);
+                }
+            }
+        }
+
+        /**
          * @brief Adds a component to an entity
          *
          * Also updates the entity's signature and notifies systems
@@ -213,7 +241,9 @@ namespace acheron::ecs {
             std::string typeName = "LambdaSystem_" + std::to_string(counter++);
 
             systemManager->systems[typeName] = systemFunc;
-            systemManager->signatures[typeName] = signature;
+            if (!signature.empty()) {
+                systemManager->signatures[typeName] = signature;
+            }
             systemManager->stageSystems[systemManager->GetStageOrFail(stage)].push_back(systemFunc);
 
             return systemFunc;

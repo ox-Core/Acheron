@@ -159,5 +159,7 @@ namespace acheron::ecs {
         std::unordered_map<std::string, Signature> signatures; ///< A map of systems name and the signature associated with them
 
         SystemStageID counter;
+
+        bool per_entity = true;
     };
 }

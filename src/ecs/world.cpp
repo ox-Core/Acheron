@@ -1,5 +1,8 @@
 #include "world.hpp"
 
+#include "../types/basic.hpp"
+#include "../types/matrix4.hpp"
+
 #include <print>
 
 using namespace acheron::ecs;
@@ -16,6 +19,12 @@ World::World() {
     systemManager->StageAfter("PostUpdate", "Update");
 
     systemManager->PopulateStages();
+
+    RegisterComponent<Color>();
+    RegisterComponent<Vector2>();
+    RegisterComponent<Vector3>();
+    RegisterComponent<Transform2D>();
+    RegisterComponent<Transform3D>();
 }
 
 void World::AddStageBefore(std::string name, std::string after) {

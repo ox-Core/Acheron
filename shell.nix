@@ -21,6 +21,7 @@
       doxygen
       doxygen_gui
       live-server
+      graphviz
     ];
     shellHook = ''
       export LD_LIBRARY_PATH=${pkgs.xorg.libX11}/lib:${pkgs.libGL}/lib:${pkgs.glfw}/lib:$LD_LIBRARY_PATH

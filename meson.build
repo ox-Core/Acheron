@@ -8,6 +8,8 @@ srcs = [
     'src/ecs/world.cpp',
     'src/modules/window/window.cpp',
     'src/modules/renderer/renderer.cpp',
+    'src/modules/renderer/quad.cpp',
+    'src/modules/renderer/renderers/mesh2d.cpp',
 ]
 
 include = [

@@ -15,8 +15,6 @@ void SystemManager::EntityDespawned(Entity entity) {
 
 void SystemManager::EntitySignatureChanged(Entity entity, Signature signature) {
     for(auto& [typeName, system] : systems) {
-        auto const systemSignature = signatures[typeName];
-
         auto it = signatures.find(typeName);
         if (it == signatures.end()) continue;
 

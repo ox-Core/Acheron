@@ -9,11 +9,18 @@
 #include <unordered_map>
 
 namespace acheron::ecs {
+    template<typename T>
+    struct ComponentType {
+        static inline ComponentID ID = static_cast<ComponentID>(-1); // -1 means "unassigned"
+    };
+
     /**
      * @brief Manages registered components and its arrays
      */
     class ComponentManager {
         public:
+
+        ComponentManager() : nextComponentID(0) {}
 
         /**
          * @brief Registers a component type creating a ComponentArray and an ID
@@ -24,13 +31,10 @@ namespace acheron::ecs {
          */
         template<typename T>
         void RegisterComponent() {
-            const char* typeName = typeid(T).name();
+            assert(ComponentType<T>::ID == static_cast<ComponentID>(-1) && "Duplicate registration");
 
-            assert(componentTypes.find(typeName) == componentTypes.end() && "Duplicate registration of component");
-
-            componentTypes[typeName] = nextComponentID;
-            componentArrays[typeName] = std::make_shared<ComponentArray<T>>();
-            nextComponentID++;
+            ComponentType<T>::ID = nextComponentID++;
+            componentArrays[ComponentType<T>::ID] = std::make_shared<ComponentArray<T>>();
         }
 
         /**
@@ -43,11 +47,8 @@ namespace acheron::ecs {
          */
         template<typename T>
         ComponentID GetComponentID() {
-            const char* typeName = typeid(T).name();
-
-            assert(componentTypes.find(typeName) != componentTypes.end() && "Component not registered before use");
-
-            return componentTypes[typeName];
+            assert(ComponentType<T>::ID != static_cast<ComponentID>(-1) && "Component not registered");
+            return ComponentType<T>::ID;
         }
 
         /**
@@ -87,6 +88,18 @@ namespace acheron::ecs {
         }
 
         /**
+         * @brief Checks if en entity has a component
+         *
+         * @param entity The entity to check
+         *
+         * @return If component has entity
+         */
+        template<typename T>
+        bool HasComponent(Entity entity) {
+            return GetComponentArray<T>()->HasData(entity); // you’ll need a HasData function in ComponentArray
+        }
+
+        /**
          * @brief Remove components associated with an entity
          *
          * @param entity Entity to remove components from
@@ -95,7 +108,7 @@ namespace acheron::ecs {
 
         private:
         std::unordered_map<const char*, ComponentID> componentTypes; ///< Map to associate component names and IDs
-        std::unordered_map<const char*, std::shared_ptr<IComponentArray>> componentArrays; ///< Map to associate component names and its data array
+        std::unordered_map<ComponentID, std::shared_ptr<IComponentArray>> componentArrays; ///< Map to associate component IDs and its data array
         ComponentID nextComponentID; ///< counter to assign an ID to a component
 
         /**
@@ -108,9 +121,8 @@ namespace acheron::ecs {
          */
         template<typename T>
         std::shared_ptr<ComponentArray<T>> GetComponentArray() {
-            const char* typeName = typeid(T).name();
-            assert(componentTypes.find(typeName) != componentTypes.end() && "Component not registered before use");
-            return std::static_pointer_cast<ComponentArray<T>>(componentArrays[typeName]);
+            ComponentID id = GetComponentID<T>();
+            return std::static_pointer_cast<ComponentArray<T>>(componentArrays[id]);
         }
     };
 }

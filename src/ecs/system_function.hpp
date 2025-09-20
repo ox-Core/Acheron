@@ -1,11 +1,9 @@
 #pragma once
 
-#include "ecs/system.hpp"
-#include "ecs/world.hpp"
+#include "system.hpp"
+#include "world.hpp"
 
 #include <functional>
-#include <type_traits>
-#include <utility>
 
 namespace acheron::ecs {
     /**
@@ -25,11 +23,14 @@ namespace acheron::ecs {
          * @param dt Delta Time
          */
         void Update(World& world, double dt) override {
-            if (entities.empty()) {
-                this->template Call<Func>(world, Entity{}, dt);
-            } else {
+            if (!entities.empty()) {
                 for (auto entity : entities) {
                     this->template Call<Func>(world, entity, dt);
+                }
+            } else {
+                if constexpr (!std::is_invocable_v<Func, World&, Entity, double> &&
+                              !std::is_invocable_v<Func, World&, Entity>) {
+                    this->template Call<Func>(world, Entity{}, dt);
                 }
             }
         }
