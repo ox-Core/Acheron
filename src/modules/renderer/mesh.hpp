@@ -7,11 +7,11 @@ namespace acheron::renderer {
      * @brief Base class for all meshes
      */
     struct Mesh {
-        unsigned int vao;
-        unsigned int vbo;
-        unsigned int ebo;
+        unsigned int vao; ///< VAO
+        unsigned int vbo; ///< VBO
+        unsigned int ebo; ///< EBO
 
-        size_t vertCount;
+        size_t vertCount; ///< Vertex Count
     };
 
     /**

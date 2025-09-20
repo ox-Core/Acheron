@@ -9,7 +9,7 @@ namespace acheron::renderer {
      * @brief Material for meshes
      */
     struct Material {
-        Shader* shader = nullptr;
-        Color color = Color(0xffffffff);
+        Shader* shader = nullptr; ///< Shader pointer for the material
+        Color color = Color(0xffffffff); ///< Color to tint the material
     };
 }

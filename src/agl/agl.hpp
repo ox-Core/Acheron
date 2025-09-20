@@ -9,6 +9,12 @@
 #include "func.hpp"
 
 namespace acheron::agl {
+    /**
+     * @brief Load a function pointer from glfw
+     *
+     * @tparam T The function type
+     * @param name Name of the function in glfw
+     */
     template<typename T>
     T LoadProc(std::string name) {
         T proc = (T)glfwGetProcAddress(name.c_str());
@@ -17,6 +23,9 @@ namespace acheron::agl {
         return proc;
     }
 
+    /**
+     * @brief Load binded OpenGL function pointers
+     */
     inline void aglLoad() {
         aglClearColor = LoadProc<ClearColorProc>("glClearColor");
         aglClear = LoadProc<ClearProc>("glClear");

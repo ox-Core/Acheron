@@ -8,9 +8,20 @@
 using namespace acheron::agl;
 
 namespace acheron::renderer {
+    /**
+     * @brief Wrapper for OpenGL shaders
+     */
     struct Shader {
         unsigned int id;
 
+        /**
+         * @brief Compile a shader with the source
+         *
+         * @param vsSrc Vertex Shader Source
+         * @param fsSrc Fragment Shader Source
+         *
+         * @throws Runtime erorr if shader didnt compile properly
+         */
         void Compile(std::string vsSrc, std::string fsSrc) {
             auto compileStage = [](unsigned int type, const char* src) {
                 unsigned int shader = aglCreateShader(type);
@@ -50,10 +61,20 @@ namespace acheron::renderer {
             aglDeleteShader(fs);
         }
 
+        /**
+         * @brief Bind the shader
+         */
         void Bind() {
             aglUseProgram(id);
         }
 
+
+        /**
+         * @brief Sets a vec4 uniform
+         *
+         * @param name Name of the uniform
+         * @param value Value of the uniform
+         */
         void SetUniform(const char* name, float value[4]) {
             int location = aglGetUniformLocation(id, name);
             if(location != -1) {
@@ -61,11 +82,20 @@ namespace acheron::renderer {
             }
         }
 
+        /**
+         * @brief Set a mat4 uniform
+         *
+         * @param name Name of the uniform
+         * @param value Value of the uniform
+         */
         void SetUniformMat4(const char* name, const float mat[16]) const {
             int location = aglGetUniformLocation(id, name);
             if (location != -1) aglUniformMatrix4fv(location, 1, false, mat);
         }
 
+        /**
+         * @brief Returns if the Shader was compiled
+         */
         bool IsCompiled() { return id != 0; }
     };
 }
