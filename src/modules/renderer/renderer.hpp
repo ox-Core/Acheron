@@ -7,17 +7,23 @@
 #include "types/basic.hpp"
 
 namespace acheron::renderer {
+    /**
+     * @brief Global renderer singleton
+     */
     struct Renderer {
-        bool initialized = false;
+        bool initialized = false; ///< Check for when the renderer is initialized, safety
 
-        Shader basic2DShader;
-        Shader instanced2DShader;
+        Shader basicShader; ///< Global shader for basic rendering
+        Shader instancedShader; ///< Global shader for instanced rendering
     };
 
+    /**
+     * @brief ClearColor singleton, set this to change the window clear color
+     */
     struct ClearColor : public Color {};
 
     /**
-     * @brief Module to import to create the window
+     * @brief Module to import to initialize the renderer
      */
     struct RendererModule : ecs::Module {
         void Register(ecs::World& world) override;

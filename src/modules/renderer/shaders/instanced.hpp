@@ -1,6 +1,9 @@
 #pragma once
 
 namespace acheron::renderer::shaders {
+    /**
+     * @brief Currently unused shader for batch renderer
+     */
     struct InstanceShader {
         static constexpr const char* vertex = R"(
 #version 410 core

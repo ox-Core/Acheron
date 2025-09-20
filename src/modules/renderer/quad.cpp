@@ -15,7 +15,7 @@ void renderer::QuadToMeshSystem(World& world, Entity entity) {
     if(!world.HasComponent<Material>(entity)) {
         auto& renderer = world.GetSingleton<Renderer>();
         Material mat;
-        mat.shader = &renderer.basic2DShader;
+        mat.shader = &renderer.basicShader;
         mat.color = quad.color;
         world.AddComponent<Material>(entity, std::move(mat));
     } else {

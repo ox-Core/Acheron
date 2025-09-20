@@ -45,8 +45,8 @@ void SetupRenderer(World& world) {
 
     Renderer renderer{};
 
-    renderer.basic2DShader.Compile(shaders::BasicShader::vertex, shaders::BasicShader::fragment);
-    renderer.instanced2DShader.Compile(shaders::InstanceShader::vertex, shaders::InstanceShader::fragment);
+    renderer.basicShader.Compile(shaders::BasicShader::vertex, shaders::BasicShader::fragment);
+    renderer.instancedShader.Compile(shaders::InstanceShader::vertex, shaders::InstanceShader::fragment);
 
     renderer.initialized = true;
 
@@ -63,6 +63,7 @@ void ClearFrame(World& world) {
 void PostRender(World& world) {
     auto& window = world.GetSingleton<Window>();
     auto* handle = reinterpret_cast<GLFWwindow*>(window.nativeHandle);
+
     glfwSwapBuffers(handle);
 }
 
