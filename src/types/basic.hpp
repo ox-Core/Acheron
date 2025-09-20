@@ -5,6 +5,9 @@
 #include <cstdint>
 
 namespace acheron {
+    /**
+     * @brief Color struct
+     */
     struct Color {
         std::uint8_t r, g, b, a;
 
@@ -22,14 +25,23 @@ namespace acheron {
         }
     };
 
+    /**
+     * @brief 3D Vector struct
+     */
     struct Vector3 {
         float x, y, z;
     };
 
+    /**
+     * @brief 2D Vector struct
+     */
     struct Vector2 {
         float x, y;
     };
 
+    /**
+     * @brief Transform2D struct for representing where an entity is in 2D space
+     */
     struct Transform2D {
         Vector2 position{0.0f, 0.0f};
         float rotation{0.0f};
@@ -42,6 +54,9 @@ namespace acheron {
         }
     };
 
+    /**
+     * @brief 3D transform, TODO: impliment
+     */
     struct Transform3D {
         // TODO NOT IMPLIMENTED
     };

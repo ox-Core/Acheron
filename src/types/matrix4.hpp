@@ -8,6 +8,9 @@
 #include <cstddef>
 
 namespace acheron {
+    /**
+     * @brief 4x4 Matrix data structure
+     */
     struct Matrix4 {
         float data[16] = {};
 
