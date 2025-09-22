@@ -9,6 +9,7 @@ srcs = [
     'src/modules/window/window.cpp',
     'src/modules/renderer/renderer.cpp',
     'src/modules/renderer/quad.cpp',
+    'src/modules/renderer/texture.cpp',
     'src/modules/renderer/renderers/mesh2d.cpp',
 ]
 

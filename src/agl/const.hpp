@@ -28,4 +28,26 @@ namespace acheron::agl {
     constexpr unsigned int VERSION = 0x1F02;
     constexpr unsigned int RENDERER = 0x1F02;
     constexpr unsigned int SHADING_LANGUAGE_VERSION = 0x8B8C;
+
+    constexpr unsigned int TEXTURE_2D = 0x0DE1;
+
+    constexpr unsigned int RGBA8 = 0x8058;
+    constexpr unsigned int RGBA = 0x1908;
+
+    constexpr unsigned int TEXTURE_MIN_FILTER = 0x2801;
+    constexpr unsigned int TEXTURE_MAG_FILTER = 0x2800;
+    constexpr unsigned int LINEAR = 0x2601;
+    constexpr unsigned int REPEAT = 0x2901;
+    constexpr unsigned int TEXTURE_WRAP_S = 0x2802;
+    constexpr unsigned int TEXTURE_WRAP_T = 0x2803;
+
+    constexpr unsigned int TEXTURE0 = 0x84C0;
+    constexpr unsigned int TEXTURE1 = 0x84C1;
+    constexpr unsigned int TEXTURE2 = 0x84C2;
+    constexpr unsigned int TEXTURE3 = 0x84C3;
+    constexpr unsigned int TEXTURE4 = 0x84C4;
+    constexpr unsigned int TEXTURE5 = 0x84C5;
+    constexpr unsigned int TEXTURE6 = 0x84C6;
+    constexpr unsigned int TEXTURE7 = 0x84C7;
+    constexpr unsigned int TEXTURE8 = 0x84C8;
 }

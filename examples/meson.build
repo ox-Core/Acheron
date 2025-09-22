@@ -7,7 +7,8 @@ examples = {
   'module': 'ecs/module.cpp',
   'window_config': 'window/window_config.cpp',
   'rainbow': 'renderer/rainbow.cpp',
-  'benchmarkecs': 'renderer/benchmark.cpp'
+  'benchmarkecs': 'renderer/benchmark.cpp',
+  'texture': 'renderer/texture.cpp'
 }
 
 link_args = []

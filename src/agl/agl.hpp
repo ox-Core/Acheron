@@ -1,5 +1,7 @@
 #pragma once
 
+#include <print>
+
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
@@ -19,6 +21,8 @@ namespace acheron::agl {
     T LoadProc(std::string name) {
         T proc = (T)glfwGetProcAddress(name.c_str());
         if(!proc) throw std::runtime_error("Failed to load OpenGL function '" + name + "'");
+
+        std::println("[ProcLoader] {} -> 0x{:08x}", name, reinterpret_cast<std::uintptr_t>(proc));
 
         return proc;
     }
@@ -61,8 +65,16 @@ namespace acheron::agl {
 
         aglGetUniformLocation = LoadProc<GetUniformLocationProc>("glGetUniformLocation");
         aglUniform4fv = LoadProc<Uniform4fvProc>("glUniform4fv");
+        aglUniform1i = LoadProc<Uniform1iProc>("glUniform1i");
         aglUniformMatrix4fv = LoadProc<UniformMatrix4fvProc>("glUniformMatrix4fv");
 
         aglGetString = LoadProc<GetStringProc>("glGetString");
+
+        aglGenTextures = LoadProc<GenTexturesProc>("glGenTextures");
+
+        aglBindTexture = LoadProc<BindTextureProc>("glBindTexture");
+        aglTexImage2D = LoadProc<TexImage2DProc>("glTexImage2D");
+        aglTexParameteri = LoadProc<TexParameteriProc>("glTexParameteri");
+        aglActiveTexture = LoadProc<ActiveTextureProc>("glActivetexture");
     }
 }

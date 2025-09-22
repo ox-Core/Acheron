@@ -1,9 +1,7 @@
 #include "acheron.hpp"
-#include "modules/renderer/quad.hpp"
 
 #include <cmath>
 #include <chrono>
-#include <thread>
 
 using namespace acheron;
 
@@ -72,7 +70,6 @@ int main() {
                 velocity.x *= -1;
                 quad.color = RandomColor();
             }
-
             if(transform.position.y < 0) {
                 transform.position.y = 0;
                 velocity.y *= -1;

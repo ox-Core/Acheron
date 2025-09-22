@@ -2,6 +2,7 @@
 
 #include "ecs/types.hpp"
 #include "mesh.hpp"
+#include "texture.hpp"
 
 using namespace acheron;
 
@@ -17,9 +18,17 @@ void renderer::QuadToMeshSystem(World& world, Entity entity) {
         Material mat;
         mat.shader = &renderer.basicShader;
         mat.color = quad.color;
+
+        if(world.HasComponent<Texture2D>(entity))
+            mat.textureHandle = world.GetComponent<Texture2D>(entity).handle;
+
         world.AddComponent<Material>(entity, std::move(mat));
     } else {
-        world.GetComponent<Material>(entity).color = quad.color;
+        auto& mat = world.GetComponent<Material>(entity);
+        mat.color = quad.color;
+
+        if(world.HasComponent<Texture2D>(entity))
+            mat.textureHandle = world.GetComponent<Texture2D>(entity).handle;
     }
 
     if(world.HasComponent<Mesh2D>(entity)) return;
@@ -28,10 +37,10 @@ void renderer::QuadToMeshSystem(World& world, Entity entity) {
     mesh.vertCount = 6;
 
     float verts[] = {
-        0.0f, 0.0f, 0.0f,
-        quad.width, 0.0f, 0.0f,
-        quad.width, quad.height, 0.0f,
-        0.0f, quad.height, 0.0f,
+        0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        quad.width, 0.0f, 0.0f, 1.0f, 0.0f,
+        quad.width, quad.height, 0.0f, 1.0f, 1.0f,
+        0.0f, quad.height, 0.0f, 0.0f, 1.0f,
     };
 
     unsigned int indices[] = { 0, 1, 2, 2, 3, 0 };
@@ -47,8 +56,10 @@ void renderer::QuadToMeshSystem(World& world, Entity entity) {
     aglBindBuffer(ELEMENT_ARRAY_BUFFER, mesh.ebo);
     aglBufferData(ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, STATIC_DRAW);
 
-    aglVertexAttribPointer(0, 3, GL_FLOAT, false, 3 * sizeof(float), (void*)0);
+    aglVertexAttribPointer(0, 3, GL_FLOAT, false, 5 * sizeof(float), (void*)0);
     aglEnableVertexAttribArray(0);
+    aglVertexAttribPointer(1, 2, GL_FLOAT, false, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    aglEnableVertexAttribArray(1);
 
     world.AddComponent<Mesh2D>(entity, std::move(mesh));
 }

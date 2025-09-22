@@ -5,6 +5,7 @@
 #include "agl/const.hpp"
 #include "mesh.hpp"
 #include "modules/renderer/shaders/instanced.hpp"
+#include "modules/renderer/texture.hpp"
 #include "shaders/basic.hpp"
 #include "quad.hpp"
 
@@ -74,13 +75,14 @@ void RendererModule::Register(World& world) {
     world.RegisterComponent<Mesh2D>();
     world.RegisterComponent<Mesh3D>();
     world.RegisterComponent<Material>();
+    world.RegisterComponent<Texture2D>();
 
     world.AddStageAfter("PreRender", "PostUpdate");
     world.AddStageAfter("Render3D", "PreRender");
     world.AddStageAfter("Render2D", "Render3D");
     world.AddStageAfter("PostRender", "Render3D");
 
-    world.RegisterSystem(SetupRenderer, "Start");
+    SetupRenderer(world);
 
     world.RegisterSystem(ClearFrame, "PreRender");
     world.RegisterSystem(PostRender, "PostRender");

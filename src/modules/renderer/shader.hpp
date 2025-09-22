@@ -83,6 +83,32 @@ namespace acheron::renderer {
         }
 
         /**
+         * @brief Sets a bool uniform
+         *
+         * @param name Name of the uniform
+         * @param value Value of the uniform
+         */
+        void SetUniform(const char* name, bool value) {
+            int location = aglGetUniformLocation(id, name);
+            if(location != -1) {
+                aglUniform1i(location, (int)value);
+            }
+        }
+
+        /**
+         * @brief Sets an int uniform
+         *
+         * @param name Name of the uniform
+         * @param value Value of the uniform
+         */
+        void SetUniform(const char* name, int value) {
+            int location = aglGetUniformLocation(id, name);
+            if(location != -1) {
+                aglUniform1i(location, (int)value);
+            }
+        }
+
+        /**
          * @brief Set a mat4 uniform
          *
          * @param name Name of the uniform

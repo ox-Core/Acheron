@@ -52,6 +52,6 @@ void WindowModule::Register(World& world) {
 
     world.SetSingleton<Window>({});
 
-    world.RegisterSystem(SetupWindow, "Start");
+    SetupWindow(world);
     world.RegisterSystem(PollWindow);
 }

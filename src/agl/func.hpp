@@ -37,9 +37,17 @@ namespace acheron::agl {
 
     using GetUniformLocationProc = int (*)(unsigned int program, const char* name);
     using Uniform4fvProc = void (*)(unsigned int location, int count, const float* value);
+    using Uniform1iProc = void (*)(unsigned int location, int value);
     using UniformMatrix4fvProc = void (*)(unsigned int location, int count, bool transpose, const float* value);
 
     using GetStringProc = const char* (*)(int name);
+
+    using GenTexturesProc = void (*)(int n, unsigned int* textures);
+    using BindTextureProc = void (*)(int target, unsigned int textures);
+    using TexImage2DProc = void (*)(int target, int level, int internalformat, int width, int height, int border, int format, int type, const void* data);
+
+    using TexParameteriProc = void (*)(int target, int pname, int param);
+    using ActiveTextureProc = void (*)(int texture);
 
     inline ClearColorProc aglClearColor = nullptr;
     inline ClearProc aglClear = nullptr;
@@ -73,7 +81,15 @@ namespace acheron::agl {
 
     inline GetUniformLocationProc aglGetUniformLocation = nullptr;
     inline Uniform4fvProc aglUniform4fv = nullptr;
+    inline Uniform1iProc aglUniform1i = nullptr;
     inline UniformMatrix4fvProc aglUniformMatrix4fv = nullptr;
 
     inline GetStringProc aglGetString = nullptr;
+
+    inline GenTexturesProc aglGenTextures = nullptr;
+    inline BindTextureProc aglBindTexture = nullptr;
+    inline TexImage2DProc aglTexImage2D = nullptr;
+
+    inline TexParameteriProc aglTexParameteri = nullptr;
+    inline ActiveTextureProc aglActiveTexture = nullptr;
 }
