@@ -12,6 +12,6 @@ namespace acheron::renderer {
     struct Material {
         Shader* shader = nullptr; ///< Shader pointer for the material
         Color color = Color(0xffffffff); ///< Color to tint the material
-        unsigned int textureHandle = 0;
+        Texture2D texture = Texture2D();
     };
 }

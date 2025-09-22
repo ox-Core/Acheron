@@ -13,22 +13,11 @@ using namespace acheron::agl;
 void renderer::QuadToMeshSystem(World& world, Entity entity) {
     auto& quad = world.GetComponent<RenderableQuad>(entity);
 
-    if(!world.HasComponent<Material>(entity)) {
-        auto& renderer = world.GetSingleton<Renderer>();
-        Material mat;
-        mat.shader = &renderer.basicShader;
-        mat.color = quad.color;
-
-        if(world.HasComponent<Texture2D>(entity))
-            mat.textureHandle = world.GetComponent<Texture2D>(entity).handle;
-
-        world.AddComponent<Material>(entity, std::move(mat));
-    } else {
+    if(world.HasComponent<Material>(entity)) {
         auto& mat = world.GetComponent<Material>(entity);
-        mat.color = quad.color;
+        auto& renderer = world.GetSingleton<Renderer>();
 
-        if(world.HasComponent<Texture2D>(entity))
-            mat.textureHandle = world.GetComponent<Texture2D>(entity).handle;
+        mat.shader = &renderer.basicShader;
     }
 
     if(world.HasComponent<Mesh2D>(entity)) return;

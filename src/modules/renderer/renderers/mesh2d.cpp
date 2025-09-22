@@ -28,9 +28,9 @@ void acheron::renderer::RenderMesh2D(World& world, Entity entity) {
     shader->SetUniformMat4("u_ViewProj", Matrix4::OrthoTopLeft(window.width, window.height));
     shader->SetUniformMat4("u_Model", transform);
 
-    if(material.textureHandle != 0) {
+    if(material.texture.handle != 0) {
         aglActiveTexture(TEXTURE0);
-        aglBindTexture(TEXTURE_2D, material.textureHandle);
+        aglBindTexture(TEXTURE_2D, material.texture.handle);
         shader->SetUniform("u_Texture", 0);
         shader->SetUniform("u_UseTexture", true);
     } else {

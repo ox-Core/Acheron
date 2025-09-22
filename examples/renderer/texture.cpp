@@ -1,5 +1,6 @@
 #include "modules/renderer/texture.hpp"
 #include "../../src/acheron.hpp"
+#include "modules/renderer/material.hpp"
 
 #include <chrono>
 #include <cmath>
@@ -17,18 +18,20 @@ int main() {
     world.Import<window::WindowModule>();
     world.Import<renderer::RendererModule>();
 
-    world.SpawnWith<renderer::RenderableQuad, Transform2D, renderer::Texture2D>(
+    world.SpawnWith<renderer::RenderableQuad, Transform2D, renderer::Material>(
         renderer::RenderableQuad {
             1280.0/2.0,
             720.0/2.0,
-            Color(0xffffffff)
         },
         Transform2D {
             .position = {(1280.0 / 2.0) / 2.0, (720.0 / 2.0) / 2.0},
             .rotation = 0,
             .scale = {1, 1}
         },
-        renderer::Texture2D::Load("assets/image-1.jpg")
+        renderer::Material {
+            .color = Color(0xffffffff),
+            .texture = renderer::Texture2D::Load("assets/image-1.jpg"),
+        }
     );
 
     // the window is set as a global singleton
