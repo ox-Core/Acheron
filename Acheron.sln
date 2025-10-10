@@ -1,0 +1,42 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Acheron.Core", "Acheron.Core\Acheron.Core.csproj", "{3100DAEE-AFC3-4A29-82D3-A7D1514C580D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Acheron.Engine", "Acheron.Engine\Acheron.Engine.csproj", "{5F0DA94E-CBDD-49D1-A439-42166326202E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Acheron.Examples", "Acheron.Examples", "{09AAE07D-3F0C-46B9-A21C-34C4A065F9AD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ECS", "ECS", "{FE9464AE-2D7E-48DE-868E-7B171890767E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basic", "Acheron.Examples\ECS\Basic\Basic.csproj", "{6C6733AF-25EE-40AC-941C-36C30727415A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3100DAEE-AFC3-4A29-82D3-A7D1514C580D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3100DAEE-AFC3-4A29-82D3-A7D1514C580D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3100DAEE-AFC3-4A29-82D3-A7D1514C580D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3100DAEE-AFC3-4A29-82D3-A7D1514C580D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F0DA94E-CBDD-49D1-A439-42166326202E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F0DA94E-CBDD-49D1-A439-42166326202E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F0DA94E-CBDD-49D1-A439-42166326202E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F0DA94E-CBDD-49D1-A439-42166326202E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C6733AF-25EE-40AC-941C-36C30727415A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C6733AF-25EE-40AC-941C-36C30727415A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C6733AF-25EE-40AC-941C-36C30727415A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C6733AF-25EE-40AC-941C-36C30727415A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{FE9464AE-2D7E-48DE-868E-7B171890767E} = {09AAE07D-3F0C-46B9-A21C-34C4A065F9AD}
+		{6C6733AF-25EE-40AC-941C-36C30727415A} = {FE9464AE-2D7E-48DE-868E-7B171890767E}
+	EndGlobalSection
+EndGlobal
