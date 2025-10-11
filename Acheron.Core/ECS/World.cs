@@ -10,8 +10,8 @@ public class World {
     private ComponentManager componentManager = new();
 
     public World() {
-        foreach(var type in Assembly.GetCallingAssembly().GetTypes()) {
-            if(type.GetCustomAttributes(typeof(ComponentAttribute), true).Length > 0) {
+        foreach (var type in Assembly.GetCallingAssembly().GetTypes()) {
+            if (type.GetCustomAttributes(typeof(ComponentAttribute), true).Length > 0) {
                 RegisterComponent(type);
             }
         }
@@ -211,12 +211,24 @@ public class World {
         return systemManager.Register(func, signature, stage);
     }
 
+    public System RegisterSystem(Delegate func, string stage = "Update") {
+        return RegisterSystem(func, [], stage);
+    }
+
     public void SetSingleton<T>(T instance) where T : new() {
         SingletonStorage<T>.Set(instance);
     }
 
     public ref T GetSingleton<T>() where T : new() {
         return ref SingletonStorage<T>.Get();
+    }
+
+    public bool IsSingletonSet<T>() where T : new() {
+        return SingletonStorage<T>.IsSet;   
+    }
+
+    public void ImportModule<T>() where T : Module, new() {
+        new T().Register(this);
     }
 
     public void Update() {
