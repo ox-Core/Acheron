@@ -1,5 +1,17 @@
 namespace Acheron.Core.ECS;
 
+[AttributeUsage(AttributeTargets.Delegate | AttributeTargets.Method)]
+public class SystemAttribute : Attribute {
+    public Type[] Components { get; }
+    public string Stage = "Update";
+
+    public SystemAttribute(params Type[] components) => Components = components;
+    public SystemAttribute(string stage, params Type[] components) {
+        Components = components;
+        Stage = stage;
+    }
+}
+
 public class System {
     internal HashSet<Entity> Entities { get; } = [];
 
@@ -22,6 +34,6 @@ public class System {
             }
         }
     }
-    
+
     internal bool Matches(Signature entitySignature) => signature.Count == 0 || signature.IsSubsetOf(entitySignature);
 }

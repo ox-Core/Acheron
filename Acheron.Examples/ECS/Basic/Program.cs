@@ -19,6 +19,15 @@ struct ShouldQuit {
 }
 
 class Program {
+    [System(typeof(Player), typeof(Health))]
+    static void SubtractHealthSystem(World world, Entity e) {
+        ref var health = ref world.GetComponent<Health>(e);
+        health.value -= 1;
+        Console.WriteLine($"Health: {health.value}");
+        if (health.value <= 0) {
+            world.GetSingleton<ShouldQuit>().value = true;
+        }
+    }
 
     static void Main(string[] args) {
         var world = new World();
@@ -26,15 +35,6 @@ class Program {
         world.SetSingleton<ShouldQuit>(new ShouldQuit());
 
         world.SpawnWith(new Player(), new Health(20));
-
-        world.RegisterSystem((World world, Entity e) => {
-            ref var health = ref world.GetComponent<Health>(e);
-            health.value -= 1;
-            Console.WriteLine($"Health: {health.value}");
-            if(health.value <= 0) {
-                world.GetSingleton<ShouldQuit>().value = true;
-            }
-        }, [typeof(Player), typeof(Health)]);
 
         ref var shouldQuit = ref world.GetSingleton<ShouldQuit>();
 

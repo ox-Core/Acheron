@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using System.Reflection;
 
 using Acheron.Core.ECS.Internal;
@@ -10,9 +11,24 @@ public class World {
     private ComponentManager componentManager = new();
 
     public World() {
-        foreach (var type in Assembly.GetCallingAssembly().GetTypes()) {
-            if (type.GetCustomAttributes(typeof(ComponentAttribute), true).Length > 0) {
-                RegisterComponent(type);
+        var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+        foreach(var asm in assemblies) {     
+            foreach (var type in asm.GetTypes()) {
+                if (type.GetCustomAttributes(typeof(ComponentAttribute), true).Length > 0) {
+                    RegisterComponent(type);
+                }
+
+                foreach (var method in type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)) {
+                    var attr = method.GetCustomAttribute<SystemAttribute>();
+                    if(attr != null) {
+                        var parameters = method.GetParameters().Select(p => p.ParameterType).ToList();
+                        var funcType = Expression.GetActionType(parameters.ToArray());
+                        var func = method.CreateDelegate(funcType);
+                        
+                        var signature = new Signature([.. attr.Components.Select(t => componentManager.GetComponentID(t))]);
+                        systemManager.Register(method.Name, func, signature, attr.Stage);
+                    }
+                }
             }
         }
     }
@@ -204,15 +220,6 @@ public class World {
 
     public ref T GetComponent<T>(Entity entity) {
         return ref componentManager.GetComponent<T>(entity);
-    }
-
-    public System RegisterSystem(Delegate func, IEnumerable<Type> components, string stage = "Update") {
-        var signature = new Signature(components.Select(t => componentManager.GetComponentID(t)).ToHashSet());
-        return systemManager.Register(func, signature, stage);
-    }
-
-    public System RegisterSystem(Delegate func, string stage = "Update") {
-        return RegisterSystem(func, [], stage);
     }
 
     public void SetSingleton<T>(T instance) where T : new() {

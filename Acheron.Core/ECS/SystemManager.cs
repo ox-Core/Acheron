@@ -5,11 +5,7 @@ public class SystemManager {
     private readonly Dictionary<Entity, Signature> entitySignatures = [];
     private readonly Dictionary<string, Stage> stages = [];
 
-    private ulong systemCounter = 0;
-
-    public System Register(Delegate func, Signature? signature = null, string stageName = "Update") {
-        string name = $"System_{systemCounter++}";
-
+    public System Register(string name, Delegate func, Signature? signature = null, string stageName = "Update") {
         var system = new System(func, signature ?? new Signature());
         systems[name] = system;
         

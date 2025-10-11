@@ -46,10 +46,11 @@ public class WindowModule : Module {
         });
     }
 
+    [System]
     private static unsafe void PollWindow(World world) {
         var window = world.GetSingleton<Window>();
         var glfw = world.GetSingleton<GLFWApi>().api;
-        
+
         glfw.PollEvents();
 
         window.shouldClose = glfw.WindowShouldClose(window.nativeHandle);
@@ -60,7 +61,5 @@ public class WindowModule : Module {
             world.SetSingleton<WindowConfig>(new());
 
         SetupWindow(world);
-
-        world.RegisterSystem(PollWindow);
     }
 }
