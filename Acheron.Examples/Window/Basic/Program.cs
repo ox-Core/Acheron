@@ -1,6 +1,7 @@
 ﻿namespace Basic;
 
 using Acheron.Core.ECS;
+using Acheron.Engine.Renderer;
 using Acheron.Engine.Window;
 
 class Program {
@@ -9,6 +10,7 @@ class Program {
         var world = new World();
 
         world.ImportModule<WindowModule>();
+        world.ImportModule<RendererModule>();
 
         ref var window = ref world.GetSingleton<Window>();
 

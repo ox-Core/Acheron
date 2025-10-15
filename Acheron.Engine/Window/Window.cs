@@ -20,9 +20,9 @@ public class WindowConfig {
 } 
 
 public class WindowModule : Module {
-    private readonly Glfw glfw = Glfw.GetApi();
-
     private unsafe void SetupWindow(World world) {
+        var glfw = Glfw.GetApi();
+        
         var config = world.GetSingleton<WindowConfig>();
         if (!glfw.Init())
             throw new InvalidOperationException("Failed to initialize GLFW");

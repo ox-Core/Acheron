@@ -9,6 +9,7 @@ public class World {
     private EntityManager entityManager = new();
     private SystemManager systemManager = new();
     private ComponentManager componentManager = new();
+    private EventManager eventManager = new();
 
     public World() {
         var assemblies = AppDomain.CurrentDomain.GetAssemblies();
@@ -240,5 +241,6 @@ public class World {
 
     public void Update() {
         systemManager.UpdateAllStages(this, 0);
+        eventManager.Dispatch(this);
     }
 }
