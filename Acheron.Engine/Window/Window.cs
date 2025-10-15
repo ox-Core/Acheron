@@ -1,3 +1,4 @@
+using System.Numerics;
 using Acheron.Core.ECS;
 using Silk.NET.GLFW;
 
@@ -5,11 +6,28 @@ namespace Acheron.Engine.Window;
 
 public class Window {
     public bool shouldClose = false;
+    public Vector2 size = Vector2.Zero;
     public unsafe WindowHandle* nativeHandle;
 }
 
 class GLFWApi {
-    public Glfw api;
+    private readonly Glfw? api;
+    private readonly GlfwContext? ctx;
+
+    public GLFWApi() { }
+
+    public GLFWApi(Glfw api, GlfwContext ctx) {
+        this.api = api;
+        this.ctx = ctx;
+    }
+
+    public Glfw Glfw() {
+        return api!;
+    }
+
+    public GlfwContext Context() {
+        return ctx!;
+    }
 }
 
 public class WindowConfig {
@@ -20,7 +38,7 @@ public class WindowConfig {
 } 
 
 public class WindowModule : Module {
-    private unsafe void SetupWindow(World world) {
+    private static unsafe void SetupWindow(World world) {
         var glfw = Glfw.GetApi();
         
         var config = world.GetSingleton<WindowConfig>();
@@ -39,17 +57,16 @@ public class WindowModule : Module {
 
         world.SetSingleton<Window>(new() {
             nativeHandle = handle,
+            size = new Vector2(config.width, config.height)
         });
 
-        world.SetSingleton<GLFWApi>(new() {
-            api = glfw,
-        });
+        world.SetSingleton<GLFWApi>(new(glfw, new GlfwContext(glfw, handle)));
     }
 
     [System]
     private static unsafe void PollWindow(World world) {
         var window = world.GetSingleton<Window>();
-        var glfw = world.GetSingleton<GLFWApi>().api;
+        var glfw = world.GetSingleton<GLFWApi>().Glfw();
 
         glfw.PollEvents();
 

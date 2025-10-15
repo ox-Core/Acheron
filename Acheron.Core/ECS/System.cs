@@ -15,10 +15,13 @@ public class SystemAttribute : Attribute {
 public class System {
     internal HashSet<Entity> Entities { get; } = [];
 
+    public string Name = "???";
+
     private readonly Delegate func;
     private readonly Signature signature;
 
-    public System(Delegate func, Signature signature) {
+    public System(string name, Delegate func, Signature signature) {
+        Name = name;
         this.func = func;
         this.signature = signature;
     }

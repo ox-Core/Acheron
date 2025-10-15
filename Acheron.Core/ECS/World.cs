@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -11,32 +12,49 @@ public class World {
     private ComponentManager componentManager = new();
     private EventManager eventManager = new();
 
+
+    private readonly Stopwatch dtStopwatch = Stopwatch.StartNew();
+    private double dtLastTime = 0;
+
     public World() {
+        systemManager.GetOrCreateStage("Start");
+        systemManager.StageAfter("PreUpdate", "Start");
+        systemManager.StageAfter("Update", "PreUpdate");
+        systemManager.StageAfter("PostUpdate", "Update");
+        PopulateAttributes();
+    }
+
+    private void PopulateAttributes() {
         var assemblies = AppDomain.CurrentDomain.GetAssemblies();
         foreach(var asm in assemblies) {     
             foreach (var type in asm.GetTypes()) {
                 if (type.GetCustomAttributes(typeof(ComponentAttribute), true).Length > 0) {
+                    Console.WriteLine("Registered Component " + type.Name);
                     RegisterComponent(type);
                 }
 
-                foreach (var method in type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)) {
-                    var attr = method.GetCustomAttribute<SystemAttribute>();
-                    if(attr != null) {
-                        var parameters = method.GetParameters().Select(p => p.ParameterType).ToList();
-                        var funcType = Expression.GetActionType(parameters.ToArray());
+                foreach (var method in type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)) {                    
+                    var subAttr = method.GetCustomAttribute<SubscribeAttribute>();
+                    if (subAttr != null) {
+                        Type eventType = subAttr.EventType;
+
+                        var parameters = method.GetParameters().Select(p => p.ParameterType).ToArray();
+                        var funcType = Expression.GetActionType(parameters);
                         var func = method.CreateDelegate(funcType);
-                        
-                        var signature = new Signature([.. attr.Components.Select(t => componentManager.GetComponentID(t))]);
-                        systemManager.Register(method.Name, func, signature, attr.Stage);
+
+                        var subscribeMethod = typeof(EventManager)
+                            .GetMethods()
+                            .FirstOrDefault(m => m.Name == "Subscribe" && m.IsGenericMethodDefinition)!;
+
+                        var genericSubscribe = subscribeMethod.MakeGenericMethod(eventType);
+                        genericSubscribe.Invoke(eventManager, [func]);
                     }
                 }
             }
         }
     }
 
-    public Entity Spawn() {
-        return entityManager.Spawn();
-    }
+    public Entity Spawn() => entityManager.Spawn();
 
     public Entity SpawnWith<T1>(T1 c1) {
         var e = Spawn();
@@ -182,9 +200,7 @@ public class World {
         componentManager.EntityDespawned(entity);
     }
 
-    public void RegisterComponent<T>() {
-        componentManager.RegisterComponent<T>();
-    }
+    public void RegisterComponent<T>() => componentManager.RegisterComponent<T>();
 
     public void RegisterComponent(Type t) {
         var methodInfo = typeof(ComponentManager).GetMethod(nameof(ComponentManager.RegisterComponent));
@@ -195,9 +211,7 @@ public class World {
         method.Invoke(componentManager, null);
     }
 
-    public bool HasComponent<T>(Entity entity) {
-        return componentManager.HasComponent<T>(entity);
-    }
+    public bool HasComponent<T>(Entity entity) => componentManager.HasComponent<T>(entity);
 
     public void AddComponent<T>(Entity entity, T component) {
         componentManager.AddComponent<T>(entity, component);
@@ -219,9 +233,10 @@ public class World {
         systemManager.SetEntitySignature(entity, signature);
     }
 
-    public ref T GetComponent<T>(Entity entity) {
-        return ref componentManager.GetComponent<T>(entity);
-    }
+    public ref T GetComponent<T>(Entity entity) => ref componentManager.GetComponent<T>(entity);
+    
+    public ComponentID GetComponentID<T>(Entity entity) => componentManager.GetComponentID<T>();
+    public ComponentID GetComponentID(Type t) => componentManager.GetComponentID(t);
 
     public void SetSingleton<T>(T instance) where T : new() {
         SingletonStorage<T>.Set(instance);
@@ -231,16 +246,22 @@ public class World {
         return ref SingletonStorage<T>.Get();
     }
 
-    public bool IsSingletonSet<T>() where T : new() {
-        return SingletonStorage<T>.IsSet;   
-    }
+    public bool IsSingletonSet<T>() where T : new() => SingletonStorage<T>.IsSet;   
 
-    public void ImportModule<T>() where T : Module, new() {
-        new T().Register(this);
-    }
+    public void StageBefore(string before, string after) => systemManager.StageBefore(before, after);
+    public void StageAfter(string after, string before) => systemManager.StageAfter(after, before);
+
+    public void ImportModule<T>() where T : Module, new() => new T().Register(this);
 
     public void Update() {
-        systemManager.UpdateAllStages(this, 0);
+        if (dtLastTime == 0) dtLastTime = dtStopwatch.Elapsed.TotalSeconds;
+        double currentTime = dtStopwatch.Elapsed.TotalSeconds;
+        double dt = currentTime - dtLastTime;
+        dtLastTime = currentTime;
+
+        Console.WriteLine(1 / dt);
+
+        systemManager.UpdateAllStages(this, dt);
         eventManager.Dispatch(this);
     }
 }

@@ -32,7 +32,7 @@ class Program {
     static void Main(string[] args) {
         var world = new World();
 
-        world.SetSingleton<ShouldQuit>(new ShouldQuit());
+        world.SetSingleton<ShouldQuit>(new());
 
         world.SpawnWith(new Player(), new Health(20));
 
