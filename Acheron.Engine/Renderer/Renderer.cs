@@ -20,7 +20,7 @@ public class GLApi {
     }
 }
 
-class ClearColor {
+public class ClearColor {
     readonly Color color;
 
     public ClearColor() {}
