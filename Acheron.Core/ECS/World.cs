@@ -16,6 +16,8 @@ public class World {
     private readonly Stopwatch dtStopwatch = Stopwatch.StartNew();
     private double dtLastTime = 0;
 
+    private double deltaTime = 0;
+
     public World() {
         systemManager.GetOrCreateStage("Start");
         systemManager.StageAfter("PreUpdate", "Start");
@@ -34,9 +36,9 @@ public class World {
                 }
 
                 foreach (var method in type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)) {                    
-                    var subAttr = method.GetCustomAttribute<SubscribeAttribute>();
+                    var subAttr = method.GetCustomAttribute<UntypedSubscribeAttribute>();
                     if (subAttr != null) {
-                        Type eventType = subAttr.EventType;
+                        Type eventType = subAttr.EventType!;
 
                         var parameters = method.GetParameters().Select(p => p.ParameterType).ToArray();
                         var funcType = Expression.GetActionType(parameters);
@@ -234,7 +236,12 @@ public class World {
     }
 
     public ref T GetComponent<T>(Entity entity) => ref componentManager.GetComponent<T>(entity);
-    
+    public object GetComponentDeref(Entity entity, Type t) => componentManager.GetComponentDeref(entity, t);
+
+    public void SetComponent(Entity entity, Type componentType, object component) => componentManager.SetComponent(entity, componentType, component);
+
+    public Type GetComponentType(ComponentID id) => componentManager.GetComponentType(id);
+
     public ComponentID GetComponentID<T>(Entity entity) => componentManager.GetComponentID<T>();
     public ComponentID GetComponentID(Type t) => componentManager.GetComponentID(t);
 
@@ -248,20 +255,20 @@ public class World {
 
     public bool IsSingletonSet<T>() where T : new() => SingletonStorage<T>.IsSet;   
 
-    public void StageBefore(string before, string after) => systemManager.StageBefore(before, after);
-    public void StageAfter(string after, string before) => systemManager.StageAfter(after, before);
+    public void AddStageBefore(string before, string after) => systemManager.StageBefore(before, after);
+    public void AddStageAfter(string after, string before) => systemManager.StageAfter(after, before);
 
     public void ImportModule<T>() where T : Module, new() => new T().Register(this);
+
+    public double DeltaTime() => deltaTime;
 
     public void Update() {
         if (dtLastTime == 0) dtLastTime = dtStopwatch.Elapsed.TotalSeconds;
         double currentTime = dtStopwatch.Elapsed.TotalSeconds;
-        double dt = currentTime - dtLastTime;
+        deltaTime = currentTime - dtLastTime;
         dtLastTime = currentTime;
 
-        Console.WriteLine(1 / dt);
-
-        systemManager.UpdateAllStages(this, dt);
+        systemManager.UpdateAllStages(this);
         eventManager.Dispatch(this);
     }
 }

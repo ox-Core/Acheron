@@ -5,24 +5,20 @@ using System.Reflection;
 namespace Acheron.Core.ECS;
 
 public class SystemManager {
-    private readonly Dictionary<string, System> systems = [];
+    private readonly Dictionary<string, ISystem> systems = [];
     private readonly Dictionary<Entity, Signature> entitySignatures = [];
     private readonly Dictionary<string, Stage> stages = [];
     private readonly List<Stage> stageOrder = [];
 
     private bool isStarted = false;
 
-    public System Register(string name, Delegate func, Signature? signature = null, string stageName = "Update") {
-        var system = new System(name, func, signature ?? new Signature());
+    public void Register(string name, ISystem system, Signature? signature = null, string stageName = "Update") {
         systems[name] = system;
-        
         
         GetStageOrFail(stageName).Systems.Add(system);
 
         foreach (var kv in entitySignatures)
             UpdateSystemForEntity(system, kv.Key, kv.Value);
-
-        return system;
     }
 
     public void SetEntitySignature(Entity entity, Signature signature) {
@@ -52,7 +48,7 @@ public class SystemManager {
         }
     }
 
-    private void UpdateSystemForEntity(System system, Entity entity, Signature signature) {
+    private void UpdateSystemForEntity(ISystem system, Entity entity, Signature signature) {
         if (system.Matches(signature))
             system.Entities.Add(entity);
         else system.Entities.Remove(entity);
@@ -77,19 +73,22 @@ public class SystemManager {
 
         return stage;
     }
-    
+
+
     private void PopulateAttributes(World world) {
         var assemblies = AppDomain.CurrentDomain.GetAssemblies();
         foreach (var asm in assemblies) {
             foreach (var type in asm.GetTypes()) {
-                foreach (var method in type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)) {
+                foreach (var method in type.GetMethods(BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)) {
                     var sysAttr = method.GetCustomAttribute<SystemAttribute>();
+            
                     if (sysAttr != null) {
-                        var parameters = method.GetParameters().Select(p => p.ParameterType).ToList();
-                        var funcType = Expression.GetActionType(parameters.ToArray());
-                        var func = method.CreateDelegate(funcType);
-
-                        var signature = new Signature([.. sysAttr.Components.Select(t => world.GetComponentID(t))]);
+                        var componentTypes = sysAttr.GetType().IsGenericType
+                            ? sysAttr.GetType().GetGenericArguments()
+                            : Type.EmptyTypes;
+                        
+                        var signature = new Signature([.. componentTypes.Select(t => world.GetComponentID(t))]);
+                        var func = SystemHelper.GetSystemType(componentTypes, signature, method);
                         Register(method.Name, func, signature, sysAttr.Stage);
                     }
                 }
@@ -97,13 +96,13 @@ public class SystemManager {
         }
     }
 
-    public void UpdateAllStages(World world, double dt) {
+    public void UpdateAllStages(World world) {
         foreach (var stage in stages.Values) {
-            if (stage.Name == "Start" && isStarted) return;
+            if (stage.Name == "Start" && isStarted) continue;
             else if (stage.Name == "Start" && !isStarted) PopulateAttributes(world);
 
             foreach (var system in stage.Systems) {
-                system.Update(world, dt);
+                system.Update(world);
             }
         }
         isStarted = true;

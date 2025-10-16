@@ -9,6 +9,7 @@ public class ComponentManager {
     private readonly Dictionary<ComponentID, string> componentNames = [];
 
     private readonly Dictionary<Type, ComponentID> typeToID = [];
+    private readonly Dictionary<ComponentID, Type> idToType = [];
 
     public ComponentID RegisterComponent<T>() {
         var type = typeof(T);
@@ -17,6 +18,7 @@ public class ComponentManager {
 
         var id = nextComponentID++;
         typeToID[type] = id;
+        idToType[id] = type;
 
         componentArrays[id] = new ComponentArray<T>();
         componentNames[id] = type.Name;
@@ -33,10 +35,15 @@ public class ComponentManager {
         return id;
     }
 
-    public ComponentID GetComponentID(Type t) => typeToID[t];
+    public ComponentID GetComponentID(Type type) {
+        if (!typeToID.TryGetValue(type, out var id))
+            throw new InvalidOperationException($"Component {type.Name} not registered.");
+
+        return id;
+    }
 
     public void EntityDespawned(Entity entity) {
-        foreach(var arr in componentArrays.Values) {
+        foreach (var arr in componentArrays.Values) {
             ((IComponentArray)arr).EntityDespawned(entity);
         }
     }
@@ -51,6 +58,20 @@ public class ComponentManager {
 
     public ref T GetComponent<T>(Entity entity) {
         return ref GetComponentArray<T>().GetData(entity);
+    }
+
+    public object GetComponentDeref(Entity entity, Type t) {
+        return GetComponentArray(t).GetDataObject(entity);
+    }
+
+    public void SetComponent(Entity entity, Type componentType, object component) {
+        GetComponentArray(componentType).SetDataObject(entity, component);
+    }
+
+    public Type GetComponentType(ComponentID id) {
+        if (!idToType.TryGetValue(id, out var type))
+            throw new InvalidOperationException($"ComponentID {id} not registered.");
+        return type;
     }
 
     public bool HasComponent<T>(Entity entity) {
@@ -68,5 +89,14 @@ public class ComponentManager {
             throw new InvalidOperationException($"Component array for {typeof(T).Name} not found.");
 
         return (ComponentArray<T>)array;
+    }
+
+    private IComponentArray GetComponentArray(Type type) {
+        var id = GetComponentID(type);
+
+        if (!componentArrays.TryGetValue(id, out var array))
+            throw new InvalidOperationException($"Component array for {type.Name} not found.");
+
+        return (IComponentArray)array;
     }
 }

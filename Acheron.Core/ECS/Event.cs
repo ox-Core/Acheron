@@ -1,9 +1,12 @@
 namespace Acheron.Core.ECS;
 
+public class UntypedSubscribeAttribute : Attribute {
+
+    public Type? EventType;
+}
+
 [AttributeUsage(AttributeTargets.Delegate | AttributeTargets.Method)]
-public class SubscribeAttribute : Attribute {
+public class SubscribeAttribute<T> : UntypedSubscribeAttribute {
 
-    public Type EventType;
-
-    public SubscribeAttribute(Type eventType) => EventType = eventType;
+    public SubscribeAttribute() => EventType = typeof(T);
 }

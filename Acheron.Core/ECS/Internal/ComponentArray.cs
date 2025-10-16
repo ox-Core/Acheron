@@ -2,6 +2,8 @@ namespace Acheron.Core.ECS.Internal;
 
 public interface IComponentArray {
     void EntityDespawned(Entity entity);
+    object GetDataObject(Entity entity);
+    void SetDataObject(Entity entity, object component);
 }
 
 public class ComponentArray<T> : IComponentArray {
@@ -17,7 +19,7 @@ public class ComponentArray<T> : IComponentArray {
             Array.Resize(ref componentArray, newCapacity);
         }
     }
-    
+
     public void InsertData(Entity entity, T component) {
         if (entityToIndex.ContainsKey(entity))
             throw new InvalidOperationException("Duplicate Components on Entity.");
@@ -30,6 +32,20 @@ public class ComponentArray<T> : IComponentArray {
         componentArray[newIndex] = component;
 
         size++;
+    }
+
+    public void SetData(Entity entity, T component) {
+        if (!entityToIndex.TryGetValue(entity, out int index))
+            throw new InvalidOperationException("Settings nonexistant component");
+
+        componentArray[index] = component;
+    }
+    
+
+    public void SetDataObject(Entity entity, object component) {
+        if (!entityToIndex.TryGetValue(entity, out int index))
+            throw new InvalidOperationException("Settings nonexistant component");
+        componentArray[index] = (T)component;
     }
 
     public bool HasData(Entity entity) {
@@ -61,8 +77,14 @@ public class ComponentArray<T> : IComponentArray {
         return ref componentArray[index];
     }
 
+    public object GetDataObject(Entity entity) {
+        if (!entityToIndex.TryGetValue(entity, out int index))
+            throw new InvalidOperationException("Trying to get Component that doesnt exist.");
+        return componentArray[index]!;
+    }
+
     public void EntityDespawned(Entity entity) {
         if (entityToIndex.ContainsKey(entity))
             RemoveData(entity);
-    } 
+    }
 }

@@ -19,9 +19,8 @@ struct ShouldQuit {
 }
 
 class Program {
-    [System(typeof(Player), typeof(Health))]
-    static void SubtractHealthSystem(World world, Entity e) {
-        ref var health = ref world.GetComponent<Health>(e);
+    [System<Player, Health>()]
+    public static void SubtractHealthSystem(World world, ref Player player, ref Health health) {
         health.value -= 1;
         Console.WriteLine($"Health: {health.value}");
         if (health.value <= 0) {
