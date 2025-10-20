@@ -45,6 +45,11 @@ public class WindowModule : Module {
         if (!glfw.Init())
             throw new InvalidOperationException("Failed to initialize GLFW");
 
+        glfw.WindowHint(WindowHintInt.ContextVersionMajor, 4);
+        glfw.WindowHint(WindowHintInt.ContextVersionMinor, 1);
+        glfw.WindowHint(WindowHintOpenGlProfile.OpenGlProfile, OpenGlProfile.Core);
+        glfw.WindowHint(WindowHintBool.OpenGLForwardCompat, true);
+        
         glfw.WindowHint(WindowHintBool.Visible, true);
         glfw.WindowHint(WindowHintBool.Resizable, config.resizeable);
 
