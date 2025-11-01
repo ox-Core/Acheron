@@ -9,7 +9,6 @@ using Acheron.Engine.Window;
 record struct ColorCounter(float Value = 0);
 
 class Program {
-    
 
     static void Main(string[] args) {
         var world = new World();

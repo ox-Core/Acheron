@@ -1,8 +1,10 @@
 ﻿namespace Rainbow;
 
 using System.Drawing;
+using System.Numerics;
 using Acheron.Core.ECS;
 using Acheron.Engine.Renderer;
+using Acheron.Engine.Types;
 using Acheron.Engine.Window;
 
 [Component]
@@ -10,7 +12,7 @@ record struct ColorCounter(float Value = 0);
 
 class Program {
     [System<ColorCounter>]
-    public static void RainbowClearSystem(World world, ref ColorCounter colorCounter) {
+    public static void RainbowClearSystem(World world, Entity _, ref ColorCounter colorCounter) {
         colorCounter.Value += (float)world.DeltaTime();
 
         var t = colorCounter.Value;
@@ -24,6 +26,10 @@ class Program {
 
     static void Main(string[] args) {
         var world = new World();
+
+        world.SetSingleton(new WindowConfig() {
+            Width = 1280, Height = 720, Resizeable = false,
+        });
 
         world.ImportModule<WindowModule>();
         world.ImportModule<RendererModule>();
