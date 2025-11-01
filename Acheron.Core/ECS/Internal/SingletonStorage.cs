@@ -1,20 +1,20 @@
 namespace Acheron.Core.ECS.Internal;
 
 public static class SingletonStorage<T> where T : new() {
-    private static T _instance = default!;
-    private static bool _initialized = false;
+    private static T instance = default!;
+    private static bool initialized = false;
 
     public static void Set(T value) {
-        _instance = value;
-        _initialized = true;
+        instance = value;
+        initialized = true;
     }
 
     public static ref T Get() {
-        if (!_initialized)
+        if (!initialized)
             throw new InvalidOperationException("Singleton not set");
 
-        return ref _instance;
+        return ref instance;
     }
 
-    public static bool IsSet => _initialized;
+    public static bool IsSet => initialized;
 }
