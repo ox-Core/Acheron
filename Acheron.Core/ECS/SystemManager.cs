@@ -15,7 +15,8 @@ public class SystemManager {
     public void Register(string name, ISystem system, Signature? signature = null, string stageName = "Update") {
         systems[name] = system;
         
-        GetStageOrFail(stageName).Systems.Add(system);
+        if(DoesStageExist(stageName))
+            GetStageOrFail(stageName).Systems.Add(system);
 
         foreach (var kv in entitySignatures)
             UpdateSystemForEntity(system, kv.Key, kv.Value);
@@ -72,6 +73,10 @@ public class SystemManager {
         }
 
         return stage;
+    }
+
+    public bool DoesStageExist(string name) {
+        return stages.ContainsKey(name);
     }
 
 
