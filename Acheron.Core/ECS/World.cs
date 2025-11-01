@@ -28,10 +28,9 @@ public class World {
 
     private void PopulateAttributes() {
         var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-        foreach(var asm in assemblies) {     
+        foreach(var asm in assemblies) {
             foreach (var type in asm.GetTypes()) {
                 if (type.GetCustomAttributes(typeof(ComponentAttribute), true).Length > 0) {
-                    Console.WriteLine("Registered Component " + type.Name);
                     RegisterComponent(type);
                 }
 
@@ -236,9 +235,6 @@ public class World {
     }
 
     public ref T GetComponent<T>(Entity entity) => ref componentManager.GetComponent<T>(entity);
-    public object GetComponentDeref(Entity entity, Type t) => componentManager.GetComponentDeref(entity, t);
-
-    public void SetComponent(Entity entity, Type componentType, object component) => componentManager.SetComponent(entity, componentType, component);
 
     public Type GetComponentType(ComponentID id) => componentManager.GetComponentType(id);
 
@@ -261,6 +257,8 @@ public class World {
     public void ImportModule<T>() where T : Module, new() => new T().Register(this);
 
     public double DeltaTime() => deltaTime;
+
+    public void Emit<T>(T ev) => eventManager.Emit<T>(ev);
 
     public void Update() {
         if (dtLastTime == 0) dtLastTime = dtStopwatch.Elapsed.TotalSeconds;
