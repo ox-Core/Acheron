@@ -60,14 +60,6 @@ public class ComponentManager {
         return ref GetComponentArray<T>().GetData(entity);
     }
 
-    public object GetComponentDeref(Entity entity, Type t) {
-        return GetComponentArray(t).GetDataObject(entity);
-    }
-
-    public void SetComponent(Entity entity, Type componentType, object component) {
-        GetComponentArray(componentType).SetDataObject(entity, component);
-    }
-
     public Type GetComponentType(ComponentID id) {
         if (!idToType.TryGetValue(id, out var type))
             throw new InvalidOperationException($"ComponentID {id} not registered.");

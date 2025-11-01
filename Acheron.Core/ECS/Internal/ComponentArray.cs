@@ -2,8 +2,6 @@ namespace Acheron.Core.ECS.Internal;
 
 public interface IComponentArray {
     void EntityDespawned(Entity entity);
-    object GetDataObject(Entity entity);
-    void SetDataObject(Entity entity, object component);
 }
 
 public class ComponentArray<T> : IComponentArray {
@@ -39,13 +37,6 @@ public class ComponentArray<T> : IComponentArray {
             throw new InvalidOperationException("Settings nonexistant component");
 
         componentArray[index] = component;
-    }
-    
-
-    public void SetDataObject(Entity entity, object component) {
-        if (!entityToIndex.TryGetValue(entity, out int index))
-            throw new InvalidOperationException("Settings nonexistant component");
-        componentArray[index] = (T)component;
     }
 
     public bool HasData(Entity entity) {
