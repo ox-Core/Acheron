@@ -1,5 +1,6 @@
 using System.Numerics;
 using Acheron.Core.ECS;
+
 using Silk.NET.GLFW;
 
 namespace Acheron.Engine.Window;
@@ -31,16 +32,16 @@ class GLFWApi {
 }
 
 public class WindowConfig {
-    public int width = 1280;
-    public int height = 720;
-    public string title = "Acheron";
-    public bool resizeable = true;
-} 
+    public int Width = 1280;
+    public int Height = 720;
+    public string Title = "Acheron";
+    public bool Resizeable = true;
+}
 
 public class WindowModule : Module {
     private static unsafe void SetupWindow(World world) {
         var glfw = Glfw.GetApi();
-        
+
         var config = world.GetSingleton<WindowConfig>();
         if (!glfw.Init())
             throw new InvalidOperationException("Failed to initialize GLFW");
@@ -49,11 +50,11 @@ public class WindowModule : Module {
         glfw.WindowHint(WindowHintInt.ContextVersionMinor, 1);
         glfw.WindowHint(WindowHintOpenGlProfile.OpenGlProfile, OpenGlProfile.Core);
         glfw.WindowHint(WindowHintBool.OpenGLForwardCompat, true);
-        
-        glfw.WindowHint(WindowHintBool.Visible, true);
-        glfw.WindowHint(WindowHintBool.Resizable, config.resizeable);
 
-        var handle = glfw.CreateWindow(config.width, config.height, config.title, null, null);
+        glfw.WindowHint(WindowHintBool.Visible, true);
+        glfw.WindowHint(WindowHintBool.Resizable, config.Resizeable);
+
+        var handle = glfw.CreateWindow(config.Width, config.Height, config.Title, null, null);
         if (handle == null)
             throw new InvalidOperationException("Failed to create GLFW window");
 
@@ -62,13 +63,13 @@ public class WindowModule : Module {
 
         world.SetSingleton<Window>(new() {
             nativeHandle = handle,
-            size = new Vector2(config.width, config.height)
+            size = new Vector2(config.Width, config.Height)
         });
 
         world.SetSingleton<GLFWApi>(new(glfw, new GlfwContext(glfw, handle)));
     }
 
-    [System]
+    [System("PreUpdate")]
     private static unsafe void PollWindow(World world) {
         var window = world.GetSingleton<Window>();
         var glfw = world.GetSingleton<GLFWApi>().Glfw();

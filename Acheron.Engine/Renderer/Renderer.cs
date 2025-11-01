@@ -1,6 +1,7 @@
 using System.Drawing;
 using System.Numerics;
 using Acheron.Core.ECS;
+using Acheron.Engine.Renderer.Shaders;
 using Acheron.Engine.Window;
 using Silk.NET.OpenGL;
 
@@ -21,18 +22,17 @@ public class GLApi {
 }
 
 public class ClearColor {
-    readonly Color color;
+    public Color Color { get; set; } = Color.Black;
 
-    public ClearColor() {}
+    public ClearColor() { }
 
-    public ClearColor(Color color) {
-        this.color = color;
-    }
+    public ClearColor(Color color) => Color = color;
 
-    public static implicit operator Color(ClearColor self) {
-        return self.color;
-    }
-};
+    public static implicit operator Color(ClearColor self) => self.Color;
+}
+
+
+record struct BasicShader(Shader Shader);
 
 public class RendererModule : Module {
     public static unsafe void SetupRenderer(World world) {
@@ -46,16 +46,24 @@ public class RendererModule : Module {
         gl.Enable(GLEnum.DepthTest);
 
         glfw.GetFramebufferSize(window.nativeHandle, out int w, out int h);
-        gl.Viewport(new Rectangle(0, 0, w, h));
+        gl.Viewport(new Size(w, h));
 
         glfw.SwapInterval(0);
 
         glfw.SetFramebufferSizeCallback(window.nativeHandle, (_, w, h) => {
             window.size = new Vector2(w, h);
-            gl.Viewport(new Rectangle(0, 0, w, h));
+            gl.Viewport(new Size(w, h));
         });
 
         world.SetSingleton<GLApi>(new(gl));
+
+        world.SetSingleton<BasicShader>(new(
+            new Shader(
+                gl,
+                BasicShaderSource.Vertex,
+                BasicShaderSource.Fragment
+            )
+        ));
     }
 
 
@@ -83,7 +91,7 @@ public class RendererModule : Module {
 
         SetupRenderer(world);
 
-        if(!world.IsSingletonSet<ClearColor>()) {
+        if (!world.IsSingletonSet<ClearColor>()) {
             world.SetSingleton<ClearColor>(new(Color.Black));
         }
     }
