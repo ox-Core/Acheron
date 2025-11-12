@@ -8,74 +8,82 @@ public class ComponentArray<T> : IComponentArray {
     private T[] componentArray = [];
     private int size = 0;
 
-    private readonly Dictionary<Entity, int> entityToIndex = [];
-    private readonly Dictionary<int, Entity> indexToEntity = [];
+    private int[] sparse = [];
+    private Entity[] dense = [];
 
     private void EnsureCapacity() {
         if (size >= componentArray.Length) {
-            int newCapacity = (componentArray.Length + 1) * 2;
-            Array.Resize(ref componentArray, newCapacity);
+            int newSize = (componentArray.Length + 1) * 2;
+            Array.Resize(ref componentArray, newSize);
+            Array.Resize(ref dense, newSize);
+        }
+    }
+
+    private void EnsureSparseCapacity(int entityId) {
+        if (entityId >= sparse.Length) {
+            int oldSize = sparse.Length;
+            int newSize = Math.Max(entityId + 1, (sparse.Length + 1) * 2);
+            Array.Resize(ref sparse, newSize);
+            Array.Fill(sparse, -1, oldSize, newSize - oldSize);
         }
     }
 
     public void InsertData(Entity entity, T component) {
-        if (entityToIndex.ContainsKey(entity))
+        var entityId = (int)entity.Value;
+        EnsureSparseCapacity(entityId);
+
+        if (sparse[entityId] != -1)
             throw new InvalidOperationException("Duplicate Components on Entity.");
 
         EnsureCapacity();
 
-        int newIndex = size;
-        entityToIndex[entity] = newIndex;
-        indexToEntity[newIndex] = entity;
-        componentArray[newIndex] = component;
-
+        sparse[entityId] = size;
+        dense[size] = entity;
+        componentArray[size] = component;
         size++;
     }
 
     public void SetData(Entity entity, T component) {
-        if (!entityToIndex.TryGetValue(entity, out int index))
-            throw new InvalidOperationException("Settings nonexistant component");
+        var entityId = (int)entity.Value;
+        if (entityId >= sparse.Length || sparse[entityId] == -1)
+            throw new InvalidOperationException("Setting nonexistent component");
 
-        componentArray[index] = component;
+        componentArray[sparse[entityId]] = component;
     }
 
     public bool HasData(Entity entity) {
-        return entityToIndex.ContainsKey(entity);
+        var entityId = (int)entity.Value;
+        return entityId < sparse.Length && sparse[entityId] != -1;
     }
 
     public void RemoveData(Entity entity) {
-        if (!entityToIndex.TryGetValue(entity, out int indexOfRemoved))
-            throw new InvalidOperationException("Removal called for Component that doesnt exist.");
+        var entityId = (int)entity.Value;
+        if (entityId >= sparse.Length || sparse[entityId] == -1)
+            throw new InvalidOperationException("Removal called for Component that doesn't exist.");
 
-        int indexOfLast = size - 1;
+        var indexOfRemoved = sparse[entityId];
+        var indexOfLast = size - 1;
 
         componentArray[indexOfRemoved] = componentArray[indexOfLast];
+        dense[indexOfRemoved] = dense[indexOfLast];
 
-        Entity entityOfLast = indexToEntity[indexOfLast];
-        entityToIndex[entityOfLast] = indexOfRemoved;
-        indexToEntity[indexOfRemoved] = entityOfLast;
+        sparse[dense[indexOfRemoved].Value] = indexOfRemoved;
 
-        entityToIndex.Remove(entity);
-        indexToEntity.Remove(indexOfLast);
-
+        sparse[entityId] = -1;
         size--;
     }
 
     public ref T GetData(Entity entity) {
-        if (!entityToIndex.TryGetValue(entity, out int index))
-            throw new InvalidOperationException("Trying to get Component that doesnt exist.");
+        int entityId = (int)entity.Value;
+        if (entityId >= sparse.Length || sparse[entityId] == -1)
+            throw new InvalidOperationException($"Trying to get Component '{typeof(T).Name}', but it doesn't exist.");
 
-        return ref componentArray[index];
-    }
-
-    public object GetDataObject(Entity entity) {
-        if (!entityToIndex.TryGetValue(entity, out int index))
-            throw new InvalidOperationException("Trying to get Component that doesnt exist.");
-        return componentArray[index]!;
+        return ref componentArray[sparse[entityId]];
     }
 
     public void EntityDespawned(Entity entity) {
-        if (entityToIndex.ContainsKey(entity))
+        int entityId = (int)entity.Value;
+        if (entityId < sparse.Length && sparse[entityId] != -1)
             RemoveData(entity);
     }
 }
