@@ -1,6 +1,7 @@
 using System.Drawing;
 using System.Numerics;
 using Acheron.Core.ECS;
+using Acheron.Engine.Renderer.Renderers;
 using Acheron.Engine.Renderer.Shaders;
 using Acheron.Engine.Window;
 using Silk.NET.OpenGL;
@@ -31,8 +32,18 @@ public class ClearColor {
     public static implicit operator Color(ClearColor self) => self.Color;
 }
 
+class RendererInternal {
+    public RendererInternal() { }
+
+    public BatchRenderer2D? BatchRenderer;
+    
+    public RendererInternal(World world) {
+        this.BatchRenderer = new(world);
+    }
+}
 
 record struct BasicShader(Shader Shader);
+record struct BatchShader(Shader Shader);
 
 public class RendererModule : Module {
     public static unsafe void SetupRenderer(World world) {
@@ -43,15 +54,19 @@ public class RendererModule : Module {
 
         var gl = GL.GetApi(glfwApi.Context());
 
+        gl.DebugMessageCallback((GLEnum source, GLEnum type, int id, GLEnum severity, int length, nint message, nint userParam) => {
+            Console.WriteLine($"[Acheron DEBUG({severity})]: GL: I HATE YOU");
+        }, (void*)0);
+
         gl.Enable(GLEnum.DepthTest);
 
-        glfw.GetFramebufferSize(window.nativeHandle, out int w, out int h);
+        glfw.GetFramebufferSize(window.NativeHandle, out int w, out int h);
         gl.Viewport(new Size(w, h));
 
         glfw.SwapInterval(0);
 
-        glfw.SetFramebufferSizeCallback(window.nativeHandle, (_, w, h) => {
-            window.size = new Vector2(w, h);
+        glfw.SetFramebufferSizeCallback(window.NativeHandle, (_, w, h) => {
+            window.Size = new Vector2(w, h);
             gl.Viewport(new Size(w, h));
         });
 
@@ -64,8 +79,17 @@ public class RendererModule : Module {
                 BasicShaderSource.Fragment
             )
         ));
-    }
 
+        world.SetSingleton<BatchShader>(new(
+            new Shader(
+                gl,
+                BatchShaderSource.Vertex,
+                BatchShaderSource.Fragment
+            )
+        ));
+
+        world.SetSingleton<RendererInternal>(new(world));
+    }
 
     [System("PreRender")]
     public static void ClearFrameSystem(World world) {
@@ -79,7 +103,7 @@ public class RendererModule : Module {
     [System("PostRender")]
     public static unsafe void PostRenderSystem(World world) {
         var glfw = world.GetSingleton<GLFWApi>().Glfw();
-        var nativeHandle = world.GetSingleton<Window.Window>().nativeHandle;
+        var nativeHandle = world.GetSingleton<Window.Window>().NativeHandle;
         glfw.SwapBuffers(nativeHandle);
     }
 
