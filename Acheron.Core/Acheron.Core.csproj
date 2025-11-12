@@ -1,9 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
+    <PackageId>Acheron.Core</PackageId>
+    <Version>1.0.0.1</Version>
+    <Author>talonateox</Author>
+    <Product>Acherons Core ECS</Product>
+
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
 </Project>

@@ -13,7 +13,7 @@ class Program {
 
         ref var windowHandle = ref world.GetSingleton<Window>();
 
-        while(!windowHandle.shouldClose) {
+        while(!windowHandle.ShouldClose) {
             world.Update();
         }
     }
