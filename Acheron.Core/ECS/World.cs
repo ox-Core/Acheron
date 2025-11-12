@@ -12,7 +12,6 @@ public class World {
     private ComponentManager componentManager = new();
     private EventManager eventManager = new();
 
-
     private readonly Stopwatch dtStopwatch = Stopwatch.StartNew();
     private double dtLastTime = 0;
 
@@ -207,12 +206,14 @@ public class World {
         var methodInfo = typeof(ComponentManager).GetMethod(nameof(ComponentManager.RegisterComponent));
         if (methodInfo == null)
             throw new InvalidOperationException("SOMETHING VERY BAD HAS HAPPENED");
-
         var method = methodInfo.MakeGenericMethod(t);
         method.Invoke(componentManager, null);
     }
 
     public bool HasComponent<T>(Entity entity) => componentManager.HasComponent<T>(entity);
+    
+    public ComponentID GetComponentID(Type t) => componentManager.GetComponentID(t);
+    public ComponentID GetComponentID<T>() => componentManager.GetComponentID<T>();
 
     public void AddComponent<T>(Entity entity, T component) {
         componentManager.AddComponent<T>(entity, component);
@@ -238,9 +239,6 @@ public class World {
 
     public Type GetComponentType(ComponentID id) => componentManager.GetComponentType(id);
 
-    public ComponentID GetComponentID<T>(Entity entity) => componentManager.GetComponentID<T>();
-    public ComponentID GetComponentID(Type t) => componentManager.GetComponentID(t);
-
     public void SetSingleton<T>(T instance) where T : new() {
         SingletonStorage<T>.Set(instance);
     }
@@ -256,7 +254,7 @@ public class World {
 
     public void ImportModule<T>() where T : Module, new() => new T().Register(this);
 
-    public double DeltaTime() => deltaTime;
+    public double DeltaTime => deltaTime;
 
     public void Emit<T>(T ev) => eventManager.Emit<T>(ev);
 
