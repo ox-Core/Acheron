@@ -8,7 +8,7 @@ public class SystemManager {
     private readonly Dictionary<string, ISystem> systems = [];
     private readonly Dictionary<Entity, Signature> entitySignatures = [];
     private readonly Dictionary<string, Stage> stages = [];
-    private readonly List<Stage> stageOrder = [];
+    private readonly List<Stage> stagesOrdered = [];
 
     private bool isStarted = false;
 
@@ -29,14 +29,14 @@ public class SystemManager {
     }
 
     public void StageBefore(string before, string after) {
-        int index = stageOrder.FindIndex(s => s.Name == after);
-        if (index == -1) index = stageOrder.Count;
+        int index = stagesOrdered.FindIndex(s => s.Name == after);
+        if (index == -1) index = stagesOrdered.Count;
         GetOrCreateStage(before, index);
     }
 
     public void StageAfter(string after, string before) {
-        int index = stageOrder.FindIndex(s => s.Name == before);
-        if (index == -1) index = stageOrder.Count;
+        int index = stagesOrdered.FindIndex(s => s.Name == before);
+        if (index == -1) index = stagesOrdered.Count;
         else index += 1;
 
         GetOrCreateStage(after, index);
@@ -60,9 +60,9 @@ public class SystemManager {
             stage = new Stage(name);
             stages[name] = stage;
 
-            if (insertIndex.HasValue && insertIndex.Value >= 0 && insertIndex.Value <= stageOrder.Count)
-                stageOrder.Insert(insertIndex.Value, stage);
-            else stageOrder.Add(stage);
+            if (insertIndex.HasValue && insertIndex.Value >= 0 && insertIndex.Value <= stagesOrdered.Count)
+                stagesOrdered.Insert(insertIndex.Value, stage);
+            else stagesOrdered.Add(stage);
         }
         return stage;
     }
@@ -79,19 +79,18 @@ public class SystemManager {
         return stages.ContainsKey(name);
     }
 
-
     private void PopulateAttributes(World world) {
         var assemblies = AppDomain.CurrentDomain.GetAssemblies();
         foreach (var asm in assemblies) {
             foreach (var type in asm.GetTypes()) {
                 foreach (var method in type.GetMethods(BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)) {
                     var sysAttr = method.GetCustomAttribute<SystemAttribute>();
-            
+
                     if (sysAttr != null) {
-                        var componentTypes = sysAttr.GetType().IsGenericType
-                            ? sysAttr.GetType().GetGenericArguments()
+                        var attrType = sysAttr.GetType();
+                        var componentTypes = attrType.IsGenericType
+                            ? attrType.GetGenericArguments()
                             : Type.EmptyTypes;
-                        
                         var signature = new Signature([.. componentTypes.Select(t => world.GetComponentID(t))]);
                         var func = SystemHelper.GetSystemType(componentTypes, signature, method);
                         Register(method.Name, func, signature, sysAttr.Stage);
@@ -102,7 +101,7 @@ public class SystemManager {
     }
 
     public void UpdateAllStages(World world) {
-        foreach (var stage in stages.Values) {
+        foreach (var stage in stagesOrdered) {
             if (stage.Name == "Start" && isStarted) continue;
             else if (stage.Name == "Start" && !isStarted) PopulateAttributes(world);
 

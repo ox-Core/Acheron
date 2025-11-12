@@ -383,7 +383,6 @@ static class SystemHelper {
         if (!method.IsStatic) {
             throw new InvalidOperationException($"System methods must be static. Method '{method.DeclaringType!.FullName}.{method.Name}' is not static.");
         }
-
         return componentTypes.Length switch {
             0 =>  (ISystem)Activator.CreateInstance(
                     typeof(System),
