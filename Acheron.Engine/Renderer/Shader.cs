@@ -8,10 +8,10 @@ using Silk.NET.OpenGL;
 namespace Acheron.Engine.Renderer;
 
 public class Shader {
-    private uint id;
+    public uint ID;
     private bool valid;
 
-    GL? gl;
+    readonly GL? gl;
 
     public static Shader Invalid = new Shader();
 
@@ -38,14 +38,14 @@ public class Shader {
         uint vs = compileStage(GLEnum.VertexShader, vsSrc);
         uint fs = compileStage(GLEnum.FragmentShader, fsSrc);
 
-        id = gl.CreateProgram();
-        gl.AttachShader(id, vs);
-        gl.AttachShader(id, fs);
-        gl.LinkProgram(id);
+        ID = gl.CreateProgram();
+        gl.AttachShader(ID, vs);
+        gl.AttachShader(ID, fs);
+        gl.LinkProgram(ID);
 
-        int success = gl.GetProgram(id, GLEnum.LinkStatus);
+        int success = gl.GetProgram(ID, GLEnum.LinkStatus);
         if ((GLEnum)success != GLEnum.True)
-            throw new InvalidOperationException("Failed to link shader program " + id + ": " + gl.GetProgramInfoLog(id));
+            throw new InvalidOperationException("Failed to link shader program " + ID + ": " + gl.GetProgramInfoLog(ID));
 
         gl.DeleteShader(vs);
         gl.DeleteShader(fs);
@@ -54,32 +54,32 @@ public class Shader {
     }
 
     public void Bind() {
-        gl!.UseProgram(id);
+        gl!.UseProgram(ID);
     }
 
     public void SetUniform(string name, Vector4 value) {
-        int location = gl.GetUniformLocation(id, Encoding.ASCII.GetBytes(name));
+        int location = gl.GetUniformLocation(ID, Encoding.ASCII.GetBytes(name));
         if (location != -1) {
             gl!.Uniform4(location, value);
         }
     }
 
     public void SetUniform(string name, bool value) {
-        int location = gl.GetUniformLocation(id, Encoding.ASCII.GetBytes(name));
+        int location = gl.GetUniformLocation(ID, Encoding.ASCII.GetBytes(name));
         if (location != -1) {
             gl!.Uniform1(location, value ? 1 : 0);
         }
     }
 
     public void SetUniform(string name, int value) {
-        int location = gl.GetUniformLocation(id, Encoding.ASCII.GetBytes(name));
+        int location = gl.GetUniformLocation(ID, Encoding.ASCII.GetBytes(name));
         if (location != -1) {
             gl!.Uniform1(location, value);
         }
     }
 
     public unsafe void SetUniform(string name, AMatrix4 v) {
-        int location = gl.GetUniformLocation(id, Encoding.ASCII.GetBytes(name));
+        int location = gl.GetUniformLocation(ID, Encoding.ASCII.GetBytes(name));
 
         if(location != -1) {
             gl!.UniformMatrix4(location, false, v.M);
@@ -87,6 +87,6 @@ public class Shader {
 
     }
 
-    public bool IsCompiled() => id != 0;
+    public bool IsCompiled() => ID != 0;
     public bool Valid() => valid;
 }
