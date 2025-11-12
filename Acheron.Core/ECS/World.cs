@@ -132,6 +132,8 @@ public class World {
         return e;
     }
 
+    public IEnumerable<Entity> Entities => entityManager.Entities;
+
     public Entity SpawnWith<T1, T2, T3, T4, T5, T6, T7, T8, T9>(T1 c1, T2 c2, T3 c3, T4 c4, T5 c5, T6 c6, T7 c7, T8 c8, T9 c9) {
         var e = Spawn();
         AddComponent(e, c1);
@@ -257,6 +259,19 @@ public class World {
     public double DeltaTime => deltaTime;
 
     public void Emit<T>(T ev) => eventManager.Emit<T>(ev);
+
+    public void View<T1>(ViewFunc<T1> view) => new View<T1>(view).Invoke(this);
+    public void View<T1, T2>(ViewFunc<T1, T2> view) => new View<T1, T2>(view).Invoke(this);
+    public void View<T1, T2, T3>(ViewFunc<T1, T2, T3> view) => new View<T1, T2, T3>(view).Invoke(this);
+    public void View<T1, T2, T3, T4>(ViewFunc<T1, T2, T3, T4> view) => new View<T1, T2, T3, T4>(view).Invoke(this);
+    public void View<T1, T2, T3, T4, T5>(ViewFunc<T1, T2, T3, T4, T5> view) => new View<T1, T2, T3, T4, T5>(view).Invoke(this);
+    public void View<T1, T2, T3, T4, T5, T6>(ViewFunc<T1, T2, T3, T4, T5, T6> view) => new View<T1, T2, T3, T4, T5, T6>(view).Invoke(this);
+    public void View<T1, T2, T3, T4, T5, T6, T7>(ViewFunc<T1, T2, T3, T4, T5, T6, T7> view) => new View<T1, T2, T3, T4, T5, T6, T7>(view).Invoke(this);
+    public void View<T1, T2, T3, T4, T5, T6, T7, T8>(ViewFunc<T1, T2, T3, T4, T5, T6, T7, T8> view) => new View<T1, T2, T3, T4, T5, T6, T7, T8>(view).Invoke(this);
+    public void View<T1, T2, T3, T4, T5, T6, T7, T8, T9>(ViewFunc<T1, T2, T3, T4, T5, T6, T7, T8, T9> view) => new View<T1, T2, T3, T4, T5, T6, T7, T8, T9>(view).Invoke(this);
+    public void View<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(ViewFunc<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> view) => new View<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(view).Invoke(this);
+    public void View<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>(ViewFunc<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> view) => new View<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>(view).Invoke(this);
+    public void View<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>(ViewFunc<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> view) => new View<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>(view).Invoke(this);
 
     public void Update() {
         if (dtLastTime == 0) dtLastTime = dtStopwatch.Elapsed.TotalSeconds;

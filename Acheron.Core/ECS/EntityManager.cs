@@ -20,6 +20,8 @@ public class EntityManager {
         return entity;
     }
 
+    public IEnumerable<Entity> Entities => signatures.Keys;
+
     public void Despawn(Entity entity) {
         if (!signatures.ContainsKey(entity))
             throw new InvalidOperationException("Entity doesnt exist.");
