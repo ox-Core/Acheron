@@ -6,9 +6,9 @@ using Silk.NET.GLFW;
 namespace Acheron.Engine.Window;
 
 public class Window {
-    public bool shouldClose = false;
-    public Vector2 size = Vector2.Zero;
-    public unsafe WindowHandle* nativeHandle;
+    public bool ShouldClose = false;
+    public Vector2 Size = Vector2.Zero;
+    public unsafe WindowHandle* NativeHandle;
 }
 
 class GLFWApi {
@@ -62,8 +62,8 @@ public class WindowModule : Module {
         glfw.SwapBuffers(handle);
 
         world.SetSingleton<Window>(new() {
-            nativeHandle = handle,
-            size = new Vector2(config.Width, config.Height)
+            NativeHandle = handle,
+            Size = new Vector2(config.Width, config.Height)
         });
 
         world.SetSingleton<GLFWApi>(new(glfw, new GlfwContext(glfw, handle)));
@@ -76,7 +76,7 @@ public class WindowModule : Module {
 
         glfw.PollEvents();
 
-        window.shouldClose = glfw.WindowShouldClose(window.nativeHandle);
+        window.ShouldClose = glfw.WindowShouldClose(window.NativeHandle);
     }
 
     public override void Register(World world) {

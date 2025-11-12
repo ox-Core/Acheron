@@ -22,7 +22,6 @@ public class AMatrix4 {
         return m;
     }
 
-
     public static AMatrix4 Transform2D(Vector2 translation, Vector2 scale, float rz) {
         var m = Identity();
 
