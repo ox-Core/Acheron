@@ -1,16 +1,19 @@
-- name: Overview
-  href: overview.md
-- name: Getting Started
-  href: getting-started.md
-- name: World
-  href: world.md
-- name: Entities
-  href: entities.md
-- name: Components
-  href: components.md
-- name: Systems
-  href: systems.md
-- name: Events
-  href: events.md
-- name: Views
-  href: views.md
+items:
+  - name: ECS
+    items:
+    - name: Overview
+      href: overview.md
+    - name: Getting Started
+      href: getting-started.md
+    - name: World
+      href: world.md
+    - name: Entities
+      href: entities.md
+    - name: Components
+      href: components.md
+    - name: Systems
+      href: systems.md
+    - name: Events
+      href: events.md
+    - name: Views
+      href: views.md
