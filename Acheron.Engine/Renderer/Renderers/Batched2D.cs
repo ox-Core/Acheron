@@ -7,7 +7,7 @@ using Silk.NET.OpenGL;
 namespace Acheron.Engine.Renderer.Renderers;
 
 class Batch2D(Material material) {
-    public BatchedQuadVertex[] Vertices = new BatchedQuadVertex[1024];
+    public QuadVertex[] Vertices = new QuadVertex[1024];
     public uint[] Indices = new uint[1024];
 
     public int VertexCount = 0;
@@ -15,7 +15,7 @@ class Batch2D(Material material) {
 
     public Material Material = material;
 
-    public void AddQuad(BatchedQuadVertex[] verts, uint[] indices) {
+    public void AddQuad(QuadVertex[] verts, uint[] indices) {
         int vertOffset = VertexCount;
         int newVertCount = VertexCount + verts.Length;
         int newIndCount = IndexCount + indices.Length;
@@ -54,11 +54,11 @@ class BatchRenderer2D {
         gl.BindBuffer(GLEnum.ArrayBuffer, VBO);
         gl.BindBuffer(GLEnum.ElementArrayBuffer, EBO);
 
-        gl.VertexAttribPointer(0, 3, GLEnum.Float, false, (uint)sizeof(BatchedQuadVertex), (void*)0);
+        gl.VertexAttribPointer(0, 3, GLEnum.Float, false, (uint)sizeof(QuadVertex), (void*)0);
         gl.EnableVertexAttribArray(0);
-        gl.VertexAttribPointer(1, 2, GLEnum.Float, false, (uint)sizeof(BatchedQuadVertex), (void*)(3 * sizeof(float)));
+        gl.VertexAttribPointer(1, 2, GLEnum.Float, false, (uint)sizeof(QuadVertex), (void*)(3 * sizeof(float)));
         gl.EnableVertexAttribArray(1);
-        gl.VertexAttribPointer(2, 4, GLEnum.Float, false, (uint)sizeof(BatchedQuadVertex), (void*)(5 * sizeof(float)));
+        gl.VertexAttribPointer(2, 4, GLEnum.Float, false, (uint)sizeof(QuadVertex), (void*)(5 * sizeof(float)));
         gl.EnableVertexAttribArray(2);
     }
 
@@ -81,7 +81,7 @@ class BatchRenderer2D {
 
         foreach (var batch in batchRenderer.Batches) {
             gl.BindBuffer(GLEnum.ArrayBuffer, batchRenderer.VBO);
-            gl.BufferData<BatchedQuadVertex>(GLEnum.ArrayBuffer, batch.Value.Vertices, GLEnum.DynamicDraw);
+            gl.BufferData<QuadVertex>(GLEnum.ArrayBuffer, batch.Value.Vertices, GLEnum.DynamicDraw);
 
             gl.BindBuffer(GLEnum.ElementArrayBuffer, batchRenderer.EBO);
             gl.BufferData<uint>(GLEnum.ElementArrayBuffer, batch.Value.Indices, GLEnum.DynamicDraw);

@@ -22,8 +22,8 @@ class Program {
     }
 
 
-    [System<BatchedQuad, Transform2D, Velocity>]
-    static void MoveQuads(World world, Entity e, ref BatchedQuad quad, ref Transform2D transform, ref Velocity velocity) {
+    [System<RenderableQuad, Transform2D, Velocity>]
+    static void MoveQuads(World world, Entity e, ref RenderableQuad quad, ref Transform2D transform, ref Velocity velocity) {
         ref var window = ref world.GetSingleton<Window>();
         transform.Position.X += velocity.X * (float)world.DeltaTime;
         transform.Position.Y += velocity.Y * (float)world.DeltaTime;
@@ -54,7 +54,7 @@ class Program {
 
         var velocity = new Velocity(MathF.Cos(angle) * SPEED, MathF.Sin(angle) * SPEED);
 
-        world.SpawnWith(new BatchedQuad() {
+        world.SpawnWith(new RenderableQuad() {
             Width = 100,
             Height = 100,
             Color = Color.FromArgb(255, GetRandom(255), GetRandom(255), GetRandom(255)),

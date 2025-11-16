@@ -37,10 +37,10 @@ class Program {
 
         for (int i = 0; i < 100000; i++) {
             Entity e = (i % 4) switch {
-                0 => world.SpawnWith<Component1, Component2, Padding1>(default, new() { Value = 1 }, default),
-                1 => world.SpawnWith<Component1, Component2, Padding2>(default, new() { Value = 1 }, default),
-                2 => world.SpawnWith<Component1, Component2, Padding3>(default, new() { Value = 1 }, default),
-                _ => world.SpawnWith<Component1, Component2, Padding4>(default, new() { Value = 1 }, default),
+                0 => world.SpawnWith<Component1, Component2, Padding1>(default, new() { Value = 1 }, default!),
+                1 => world.SpawnWith<Component1, Component2, Padding2>(default, new() { Value = 1 }, default!),
+                2 => world.SpawnWith<Component1, Component2, Padding3>(default, new() { Value = 1 }, default!),
+                _ => world.SpawnWith<Component1, Component2, Padding4>(default, new() { Value = 1 }, default!),
             };
         }
 

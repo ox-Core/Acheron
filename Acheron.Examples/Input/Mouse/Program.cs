@@ -14,7 +14,7 @@ record struct Cursor();
 class Program {
     [Subscribe<MouseMoveEvent>]
     static void MouseMoved(World world, MouseMoveEvent ev) {
-        world.View((World world, Entity e, ref Cursor _, ref Transform2D transform, ref BatchedQuad quad) => {
+        world.View((World world, Entity e, ref Cursor _, ref Transform2D transform, ref RenderableQuad quad) => {
             transform.Position.X = ev.X - quad.Width / 2f;
             transform.Position.Y = ev.Y - quad.Height / 2f;
         });
@@ -22,7 +22,7 @@ class Program {
 
     [Subscribe<MouseButtonPressedEvent>]
     static void MousePressed(World world, MouseButtonPressedEvent ev) {
-        world.View((World world, Entity e, ref Cursor _, ref BatchedQuad quad) => {
+        world.View((World world, Entity e, ref Cursor _, ref RenderableQuad quad) => {
             switch(ev.Button) {
                 case MouseButton.Left: quad.Color = Color.Red; break;
                 case MouseButton.Right: quad.Color = Color.Blue; break;
@@ -32,7 +32,7 @@ class Program {
 
     [Subscribe<MouseButtonReleasedEvent>]
     static void MouseReleased(World world, MouseButtonReleasedEvent ev) {
-        world.View((World world, Entity e, ref Cursor _, ref BatchedQuad quad) => {
+        world.View((World world, Entity e, ref Cursor _, ref RenderableQuad quad) => {
             quad.Color = Color.White;
         });
     }
@@ -44,7 +44,7 @@ class Program {
         world.ImportModule<RendererModule>();
         world.ImportModule<InputModule>();
 
-        world.SpawnWith(new BatchedQuad() {
+        world.SpawnWith(new RenderableQuad() {
             Width = 100,
             Height = 100,
             Color = Color.White,
