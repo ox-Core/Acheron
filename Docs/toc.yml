@@ -2,18 +2,28 @@ items:
   - name: ECS
     items:
     - name: Overview
-      href: overview.md
+      href: ecs/overview.md
     - name: Getting Started
-      href: getting-started.md
+      href: ecs/getting-started.md
     - name: World
-      href: world.md
+      href: ecs/world.md
     - name: Entities
-      href: entities.md
+      href: ecs/entities.md
     - name: Components
-      href: components.md
+      href: ecs/components.md
     - name: Systems
-      href: systems.md
+      href: ecs/systems.md
     - name: Events
-      href: events.md
+      href: ecs/events.md
     - name: Views
-      href: views.md
+      href: ecs/views.md
+    - name: Modules
+      href: ecs/modules.md
+    - name: Singletons
+      href: ecs/singletons.md
+  - name: Modules
+    items:
+    - name: Usage
+      href: modules/usage.md
+    - name: Window
+      href: modules/window.md
