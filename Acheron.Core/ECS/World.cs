@@ -254,7 +254,7 @@ public class World {
     public void AddStageBefore(string before, string after) => systemManager.StageBefore(before, after);
     public void AddStageAfter(string after, string before) => systemManager.StageAfter(after, before);
 
-    public void ImportModule<T>() where T : Module, new() => new T().Register(this);
+    public void ImportModule<T>() where T : Module, new() => new T().RegisterWithDeps(this);
 
     public double DeltaTime => deltaTime;
 

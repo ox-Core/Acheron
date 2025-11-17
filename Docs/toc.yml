@@ -27,3 +27,5 @@ items:
       href: modules/usage.md
     - name: Window
       href: modules/window.md
+    - name: Input
+      href: modules/input.md
