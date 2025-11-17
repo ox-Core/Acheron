@@ -46,6 +46,8 @@ record struct BasicShader(Shader Shader);
 record struct BatchShader(Shader Shader);
 
 public class RendererModule : Module {
+    public override Type[] Dependencies => [typeof(WindowModule)];
+
     public static unsafe void SetupRenderer(World world) {
         var glfwApi = world.GetSingleton<GLFWApi>();
         var glfw = glfwApi.Glfw();

@@ -26,6 +26,8 @@ public class Mouse {
 }
 
 public class InputModule : Module {
+    public override Type[] Dependencies =>[typeof(WindowModule)];
+
     [System("PollInput")]
     private static void PollInput(World world) {
         var glfw = world.GetSingleton<GLFWApi>().Glfw();

@@ -29,7 +29,6 @@ class Program {
             Width = 1280, Height = 720, Resizeable = false,
         });
 
-        world.ImportModule<WindowModule>();
         world.ImportModule<RendererModule>();
 
         ref var window = ref world.GetSingleton<Window>();
