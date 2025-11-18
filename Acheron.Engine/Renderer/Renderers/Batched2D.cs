@@ -42,6 +42,15 @@ class BatchRenderer2D {
     public uint EBO;
     public Dictionary<string, Batch2D> Batches = [];
 
+    public void ClearBatches() {
+        foreach(var batch in Batches) {
+            Array.Clear(batch.Value.Vertices);
+            Array.Clear(batch.Value.Indices);
+            batch.Value.VertexCount = 0;
+            batch.Value.IndexCount = 0;
+        }
+    }
+
     public unsafe BatchRenderer2D(World world) {
         var gl = world.GetSingleton<GLApi>().GL();
 
@@ -105,6 +114,6 @@ class BatchRenderer2D {
 
     [System("PostRender")]
     static void CleanBatchRenderer(World world) {
-        world.GetSingleton<RendererInternal>().BatchRenderer!.Batches.Clear();
+        world.GetSingleton<RendererInternal>().BatchRenderer!.ClearBatches();
     }
 }
