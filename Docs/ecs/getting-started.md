@@ -22,7 +22,7 @@ dotnet add package Acheron.Engine
 
 
 Now as a basic example try creating a window in main as shown
-```C#
+```cs
 var world = new World();
 
 world.ImportModule<WindowModule>();
