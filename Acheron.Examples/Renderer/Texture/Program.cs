@@ -7,7 +7,6 @@ using Acheron.Engine.Types;
 using Acheron.Engine.Window;
 
 class Program {
-
     static void Main(string[] args) {
         var world = new World();
 

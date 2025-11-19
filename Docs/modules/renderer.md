@@ -10,4 +10,3 @@
 This module will setup an OpenGL context and specific renderers
 
 #### 2D Batch Renderer
-This renderer
