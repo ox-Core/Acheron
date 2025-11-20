@@ -1,38 +1,131 @@
-using System.Text.RegularExpressions;
+using System.Buffers;
+using System.Drawing;
+using System.Runtime.CompilerServices;
 using Acheron.Core.ECS;
 using Acheron.Engine.Types;
-using Silk.NET.Core;
 using Silk.NET.OpenGL;
 
 namespace Acheron.Engine.Renderer.Renderers;
 
-class Batch2D(Material material) {
-    public QuadVertex[] Vertices = new QuadVertex[1024];
-    public uint[] Indices = new uint[1024];
+unsafe class Batch2D : IDisposable {
+    public QuadVertex[] Vertices;
+    public uint[] Indices;
 
-    public int VertexCount = 0;
-    public int IndexCount = 0;
+    bool disposed;
 
-    public Material Material = material;
+    public int VertexCount;
+    public int IndexCount;
 
-    public void AddQuad(QuadVertex[] verts, uint[] indices) {
-        int vertOffset = VertexCount;
-        int newVertCount = VertexCount + verts.Length;
-        int newIndCount = IndexCount + indices.Length;
+    public Material Material;
 
-        if (newVertCount > Vertices.Length)
-            Array.Resize(ref Vertices, Math.Max(newVertCount, Vertices.Length * 2));
-        if (newIndCount > Indices.Length)
-            Array.Resize(ref Indices, Math.Max(newIndCount, Indices.Length * 2));
+    public Batch2D(Material material, int startSize = 1024) {
+        Material = material;
 
-        verts.CopyTo(Vertices.AsSpan(VertexCount));
+        Vertices = ArrayPool<QuadVertex>.Shared.Rent(startSize);
+        Indices = ArrayPool<uint>.Shared.Rent(startSize);
+        
+        VertexCount = 0;
+        IndexCount = 0;
+    }
 
-        var dst = Indices.AsSpan(IndexCount);
-        for (int i = 0; i < indices.Length; i++)
-            dst[i] = indices[i] + (uint)vertOffset;
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    static int NextSize(int x) {
+        if(x <= 0) return 1;
+        x--;
+        x |= x >> 1;
+        x |= x >> 2;
+        x |= x >> 4;
+        x |= x >> 8;
+        x |= x >> 16;
+        return x + 1;
+    }
+
+    void EnsureCapacity(int newVertCount, int newIndCount) {
+        if(newVertCount > Vertices.Length) {
+            var newSize = NextSize(newVertCount);
+            var newArr = ArrayPool<QuadVertex>.Shared.Rent(newSize);
+
+            fixed(QuadVertex* src = Vertices) {
+                fixed(QuadVertex* dst = newArr) {
+                    System.Buffer.MemoryCopy(src, dst, (long)newArr.Length * sizeof(QuadVertex), (long)VertexCount * sizeof(QuadVertex));
+                }
+                ArrayPool<QuadVertex>.Shared.Return(Vertices, clearArray: false);
+                Vertices = newArr;
+            }
+        }
+
+        if(newIndCount > Indices.Length) {
+            var newSize = NextSize(newIndCount);
+            var newArr = ArrayPool<uint>.Shared.Rent(newSize);
+
+            fixed(uint* src = Indices) {
+                fixed(uint* dst = newArr) {
+                    System.Buffer.MemoryCopy(src, dst, (long)newArr.Length * sizeof(uint), (long)IndexCount * sizeof(uint));
+                }
+                ArrayPool<uint>.Shared.Return(Indices, clearArray: false);
+                Indices = newArr;
+            }
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    static void WriteVertex(ref QuadVertex dst, float x, float y, float z, float u, float v, Color color) {
+        dst.x = x;
+        dst.y = y;
+        dst.z = z;
+        dst.u = u;
+        dst.v = v;
+        dst.r = color.R / 255f;
+        dst.g = color.G / 255f;
+        dst.b = color.B / 255f;
+        dst.a = color.A / 255f;
+    }
+
+    public void AddQuad(
+        float x0, float y0, float z0, float u0, float v0, Color color0,
+        float x1, float y1, float z1, float u1, float v1, Color color1,
+        float x2, float y2, float z2, float u2, float v2, Color color2,
+        float x3, float y3, float z3, float u3, float v3, Color color3
+    ) {
+        const int quadIndexCount = 6;
+        int newVertCount = VertexCount + 4;
+        int newIndCount = IndexCount + quadIndexCount;
+
+        EnsureCapacity(newVertCount, newIndCount);
+
+        WriteVertex(ref Vertices[VertexCount + 0], x0, y0, z0, u0, v0, color0);
+        WriteVertex(ref Vertices[VertexCount + 1], x1, y1, z1, u1, v1, color1);
+        WriteVertex(ref Vertices[VertexCount + 2], x2, y2, z2, u2, v2, color2);
+        WriteVertex(ref Vertices[VertexCount + 3], x3, y3, z3, u3, v3, color3);
+
+        uint offs = (uint)VertexCount;
+        fixed (uint* pDst = &Indices[IndexCount])
+        {
+            pDst[0] = offs + 0;
+            pDst[1] = offs + 1;
+            pDst[2] = offs + 2;
+            pDst[3] = offs + 2;
+            pDst[4] = offs + 3;
+            pDst[5] = offs + 0;
+        }
 
         VertexCount = newVertCount;
         IndexCount = newIndCount;
+    }
+
+    public void Clear() {
+        VertexCount = 0;
+        IndexCount = 0;
+    }
+
+    public void Dispose() {
+        if(!disposed) {
+            ArrayPool<QuadVertex>.Shared.Return(Vertices, clearArray: false);
+            ArrayPool<uint>.Shared.Return(Indices, clearArray: false);
+            Vertices = null!;
+            Indices = null!;
+            disposed = true;
+        }
     }
 }
 
@@ -44,10 +137,7 @@ class BatchRenderer2D {
 
     public void ClearBatches() {
         foreach(var batch in Batches) {
-            Array.Clear(batch.Value.Vertices);
-            Array.Clear(batch.Value.Indices);
-            batch.Value.VertexCount = 0;
-            batch.Value.IndexCount = 0;
+            batch.Value.Clear();
         }
     }
 

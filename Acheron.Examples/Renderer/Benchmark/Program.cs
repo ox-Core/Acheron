@@ -30,21 +30,16 @@ class Program {
         if (transform.Position.X < 0) {
             transform.Position.X = 0;
             velocity.X *= -1;
-            quad.Color = RandomColor();
         } else if (transform.Position.X + quad.Width > window.Size.X) {
             transform.Position.X = window.Size.X - quad.Width;
             velocity.X *= -1;
-            quad.Color = RandomColor();
         }
-        // Console.WriteLine(velocity.Y);
         if(transform.Position.Y < 0) {
             transform.Position.Y = 0;
             velocity.Y *= -1;
-            quad.Color = RandomColor();
         } else if(transform.Position.Y + quad.Height > window.Size.Y) {
             transform.Position.Y = window.Size.Y - quad.Height;
             velocity.Y *= -1;
-            quad.Color = RandomColor();
         }
     }
 
@@ -57,7 +52,7 @@ class Program {
         world.SpawnWith(new RenderableQuad() {
             Width = 100,
             Height = 100,
-            Color = Color.FromArgb(255, GetRandom(255), GetRandom(255), GetRandom(255)),
+            Color = RandomColor(),
         }, new Transform2D() {
             Position = new Vector2(RandomNumberGenerator.GetInt32(500), RandomNumberGenerator.GetInt32(500)),
         }, new Material() {
